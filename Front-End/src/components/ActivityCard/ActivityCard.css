@@ -1,0 +1,62 @@
+/* src/components/ActivityCard.css */
+.activity-card {
+    margin-top:159px;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    width: 250px; /* Largura reduzida do card */
+    height: 300px; /* Altura reduzida do card */
+    border-radius: 12px; /* Bordas arredondadas */
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites do card */
+    background-color: #ffffff; /* Cor de fundo do card */
+    border: 1px solid #ddd; /* Borda sutil */
+    margin: auto; /* Centraliza horizontalmente */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    font-family: 'Verdana', sans-serif; /* Fonte Verdana */
+}
+
+.activity-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada no hover */
+}
+
+.activity-card-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 16px;
+    transition: transform 0.4s ease;
+    background-color: white;
+    box-sizing: border-box; /* Inclui o padding na altura total do card */
+    font-family: 'Verdana', sans-serif; /* Fonte Verdana */
+}
+
+.activity-card-summary {
+    margin-bottom: 16px;
+    height: calc(100% - 64px); /* Ajusta a altura do resumo para dar espaço ao conteúdo de endpoints */
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse o card */
+}
+
+.activity-card-hover-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 16px;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: translateY(0); /* Inicialmente visível no final do card */
+    font-family: 'Verdana', sans-serif; /* Fonte Verdana */
+}
+
+.activity-card:hover .activity-card-content {
+    transform: translateY(-130px); /* Move o resumo para cima ao passar o mouse */
+}
+
+.activity-card:hover .activity-card-hover-content {
+    opacity: 1;
+    transform: translateY(-120px); /* Move o conteúdo de endpoints para cima ao passar o mouse */
+}
