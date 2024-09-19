@@ -5,7 +5,7 @@
     margin: 0; /* Remova margens para garantir que o conteúdo ocupe toda a tela */
     display: flex;
     flex-direction: column;
-    background: linear-gradient(to bottom, #a0c4ff, #b9e2f8); /* Gradiente de azul claro de cima para baixo */
+    background: linear-gradient(to bottom, #d4ddec, #e6f1f7); /* Gradiente de azul claro de cima para baixo */
     background-size: cover;
     background-position: center;
     user-select: none;

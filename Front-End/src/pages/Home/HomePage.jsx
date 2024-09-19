@@ -7,41 +7,36 @@ const Homepage = () => {
   const activities = [
     {
       title: 'Atividade 1',
-      summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.',
+      summary: 'Atividade sobre listas encadeadas e pilhas.',
       endpoints: [
-        '/api/atividade1/endpoint1',
-        '/api/atividade1/endpoint2',
-        '/api/atividade1/endpoint3',
+        'Ir para a atividade',
+        'Documentações úteis'
       ],
     },
     {
       title: 'Atividade 2',
-      summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.',
+      summary: 'Atividade sobre filas e árvores.',
       endpoints: [
-        '/api/atividade2/endpoint1',
-        '/api/atividade2/endpoint2',
-        '/api/atividade2/endpoint3',
+        'Ir para a atividade',
+        'Documentações úteis'
       ],
     },
     {
         title: 'Atividade 3',
-        summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.',
+        summary: 'Atividade sobre grafos e algoritmos de busca.',
         endpoints: [
-          '/api/atividade3/endpoint1',
-          '/api/atividade3/endpoint2',
-          '/api/atividade3/endpoint3',
+          'Ir para a atividade',
+          'Documentações úteis'
         ],
     },
     {
         title: 'Atividade 4',
-        summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.',
+        summary: 'Atividade sobre algoritmos de ordenação e complexidade.',
         endpoints: [
-          '/api/atividade4/endpoint1',
-          '/api/atividade4/endpoint2',
-          '/api/atividade4/endpoint3',
+          'Ir para a atividade',
+          'Documentações úteis',
         ],
     },
-    // Adicione mais atividades conforme necessário
   ];
 
   return (

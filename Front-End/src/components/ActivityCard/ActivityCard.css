@@ -1,23 +1,24 @@
 /* src/components/ActivityCard.css */
+
 .activity-card {
-    margin-top:159px;
+    margin-top: 159px;
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    width: 250px; /* Largura reduzida do card */
-    height: 300px; /* Altura reduzida do card */
-    border-radius: 12px; /* Bordas arredondadas */
-    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites do card */
-    background-color: #ffffff; /* Cor de fundo do card */
-    border: 1px solid #ddd; /* Borda sutil */
-    margin: auto; /* Centraliza horizontalmente */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-    font-family: 'Verdana', sans-serif; /* Fonte Verdana */
+    width: 250px;
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    margin: auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Verdana', sans-serif;
 }
 
 .activity-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada no hover */
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .activity-card-content {
@@ -27,16 +28,16 @@
     right: 0;
     bottom: 0;
     padding: 16px;
-    transition: transform 0.4s ease;
+    transition: transform 0.7s ease;
     background-color: white;
-    box-sizing: border-box; /* Inclui o padding na altura total do card */
-    font-family: 'Verdana', sans-serif; /* Fonte Verdana */
+    box-sizing: border-box;
+    font-family: 'Verdana', sans-serif;
 }
 
 .activity-card-summary {
     margin-bottom: 16px;
-    height: calc(100% - 64px); /* Ajusta a altura do resumo para dar espaço ao conteúdo de endpoints */
-    overflow: hidden; /* Garante que o conteúdo não ultrapasse o card */
+    height: calc(100% - 64px);
+    overflow: hidden;
 }
 
 .activity-card-hover-content {
@@ -48,15 +49,38 @@
     padding: 16px;
     opacity: 0;
     transition: opacity 1s ease, transform 1s ease;
-    transform: translateY(0); /* Inicialmente visível no final do card */
-    font-family: 'Verdana', sans-serif; /* Fonte Verdana */
+    transform: translateY(0);
+    font-family: 'Verdana', sans-serif;
 }
 
 .activity-card:hover .activity-card-content {
-    transform: translateY(-130px); /* Move o resumo para cima ao passar o mouse */
+    transform: translateY(-230px);
 }
 
 .activity-card:hover .activity-card-hover-content {
     opacity: 1;
-    transform: translateY(-120px); /* Move o conteúdo de endpoints para cima ao passar o mouse */
+    transform: translateY(-120px);
+}
+
+.activity-card-icon {
+    position: absolute;
+    top:15px; /* Ajuste conforme necessário */
+    transform: translateX(-50%);
+    background-color: rgba(226, 226, 226, 0.663); /* Cor de fundo do círculo */
+    border-radius: 50%; /* Faz com que o círculo tenha bordas arredondadas */
+    padding: 8px; /* Espaçamento interno do círculo */
+    border: 2px solid #ddd; /* Borda do círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 15px;
+}
+
+.activity-card-hover-content .endpoint-item {
+  transition: background-color 0.3s ease; /* Suaviza a transição do fundo */
+}
+
+.activity-card-hover-content .endpoint-item:hover {
+  background-color: #edf7e8; /* Cor de destaque suave */
+  border-radius: 10px; /* Borda suave */
 }
