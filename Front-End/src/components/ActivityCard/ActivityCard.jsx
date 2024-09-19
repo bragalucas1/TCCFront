@@ -1,17 +1,15 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, Divider } from '@mui/material';
 import { FaPen } from 'react-icons/fa';
-import { MdArrowForward } from 'react-icons/md'; // Importando o ícone de seta
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate
+import { MdArrowForward } from 'react-icons/md'; 
+import { useNavigate } from 'react-router-dom'; 
 import './ActivityCard.css';
 
 const ActivityCard = ({ title, summary, endpoints }) => {
-  const navigate = useNavigate(); // Hook para navegação
-
+  const navigate = useNavigate(); 
   const handleEndpointClick = (endpoint, index) => {
     if (endpoint === 'Ir para a atividade') {
-      // Lógica para navegação, usando um parâmetro id ou similar
-      navigate(`/activity/${index+1}`); // Substitua '1' pelo id da atividade correspondente
+      navigate(`/activity/${index+1}`); 
     }
   };
 
@@ -48,7 +46,7 @@ const ActivityCard = ({ title, summary, endpoints }) => {
             <Box
               className="endpoint-item"
               sx={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}
-              onClick={() => handleEndpointClick(endpoint, index)} // Adiciona o handler de clique
+              onClick={() => handleEndpointClick(endpoint, index)} 
             >
               <Typography
                 variant="body2"
@@ -58,14 +56,14 @@ const ActivityCard = ({ title, summary, endpoints }) => {
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
                   flexGrow: 1,
-                  cursor: 'pointer', // Adiciona um cursor pointer
+                  cursor: 'pointer', 
                 }}
               >
                 {endpoint}
               </Typography>
-              <MdArrowForward size={16} style={{ marginLeft: '70px', color: '#4a4a4a' }} /> {/* Pequena seta após o texto */}
+              <MdArrowForward size={16} style={{ marginLeft: '70px', color: '#4a4a4a' }} /> 
             </Box>
-            {index < endpoints.length - 1 && <Divider sx={{ my: 1, backgroundColor: '#e0e0e0' }} />} {/* Linha cinza clara */}
+            {index < endpoints.length - 1 && <Divider sx={{ my: 1, backgroundColor: '#e0e0e0' }} />} 
           </React.Fragment>
         ))}
       </Box>

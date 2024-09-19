@@ -1,30 +1,30 @@
 
 
 .home-wrapper {
-    padding: 0; /* Remova o padding superior para evitar bordas brancas indesejadas */
-    margin: 0; /* Remova margens para garantir que o conteúdo ocupe toda a tela */
+    padding: 0; 
+    margin: 0; 
     display: flex;
     flex-direction: column;
-    background: linear-gradient(to bottom, #d4ddec, #e6f1f7); /* Gradiente de azul claro de cima para baixo */
+    background: linear-gradient(to bottom, #d4ddec, #e6f1f7); 
     background-size: cover;
     background-position: center;
     user-select: none;
     height: 100vh; 
-    box-sizing: border-box; /* Garante que padding e border não afetem a altura total */
+    box-sizing: border-box; 
   }
 
   .home-content-wrapper {
-    margin: 0 auto; /* Garante que o conteúdo está centralizado */
+    margin: 0 auto; 
     display: flex;
     flex-direction: column;
     width: 100vh;
   }
   
   .home-dashboard-content {
-    margin: 0 auto 40px auto; /* Ajusta a margem para garantir espaçamento adequado */
+    margin: 0 auto 40px auto; 
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(272px, 1fr));
-    gap: 16px; /* Espaço entre os cards */
+    gap: 16px; 
   }
   

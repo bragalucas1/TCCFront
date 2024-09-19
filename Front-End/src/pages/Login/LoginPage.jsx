@@ -29,14 +29,14 @@ const LoginPage = () => {
   const handleLogin = async () => {
     if (!matricula || !senha) {
       setErrorLoginmessage('Por favor, preencha todos os campos.');
-      return; // Impede o login se os campos não estiverem preenchidos
+      return; 
     }
 
     try {
       setLoading(true);
 
       const result = {
-        success: true, // Simula sucesso
+        success: true, 
         message: 'Credenciais válidas'
       };
 
@@ -44,7 +44,7 @@ const LoginPage = () => {
         setSuccess(true);
         setTimeout(() => {
           navigate('/home');
-        }, 2000); // Redireciona após 2 segundos
+        }, 2000); 
       } else {
         setErrorLoginmessage('Credenciais inválidas. Por favor, verifique e insira novamente.');
       }
@@ -90,11 +90,11 @@ const LoginPage = () => {
               fullWidth
               className="button"
               sx={{ 
-                fontFamily: 'Verdana', // Define a fonte
-                fontSize: '16px', // Define o tamanho da fonte
+                fontFamily: 'Verdana', 
+                fontSize: '16px', 
               }}
               onClick={handleLogin}
-              disabled={loading} // Desativa o botão enquanto está carregando
+              disabled={loading} 
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
             </Button>
@@ -104,10 +104,10 @@ const LoginPage = () => {
                 color="secondary"
                 fullWidth
                 sx={{
-                  fontFamily: 'Verdana', // Define a fonte
-                  fontSize: '16px', // Define o tamanho da fonte
+                  fontFamily: 'Verdana', 
+                  fontSize: '16px', 
                 }}
-                disabled={loading} // Desativa o botão enquanto está carregando
+                disabled={loading} 
               >
                 Registrar
               </Button>

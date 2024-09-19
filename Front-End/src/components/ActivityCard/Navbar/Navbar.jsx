@@ -25,10 +25,10 @@ const Navbar = () => {
             <nav className="navbar">
                 <div className="navbar-end">
                     <button onClick={goHome} className="home-button">
-                        <FaHome size={24} /> {/* Ícone de casa */}
+                        <FaHome size={24} /> 
                     </button>
                     <div className="user-icon" onClick={toggleDropdown}>
-                        <FaUserCircle size={24} /> {/* Ícone de usuário */}
+                        <FaUserCircle size={24} /> 
                         {dropdownOpen && (
                             <div className="dropdown-menu">
                                 <p>{userName}</p>

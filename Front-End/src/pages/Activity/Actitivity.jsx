@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Container, Grid, Typography, Button, Box, Modal, TextField, IconButton } from '@mui/material';
 import { MdCheckCircle, MdUpload } from 'react-icons/md';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Importando os estilos do react-toastify
-import { MdClose } from 'react-icons/md'; // Importando ícone de fechar
+import 'react-toastify/dist/ReactToastify.css'; 
+import { MdClose } from 'react-icons/md'; 
 
 const ActivityPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -60,6 +60,7 @@ const ActivityPage = () => {
     }
     setFileName('');
     setInputText('');
+    setDisableInsertTextButton(false);
     setShowCorrectButton(false);
   };
 
@@ -68,7 +69,7 @@ const ActivityPage = () => {
     if (file && file.name.endsWith(".py")) {
       setFileName(file.name);
       setShowCorrectButton(true);
-      setDisableInsertTextButton(true); // Desativa o botão de Inserir Texto
+      setDisableInsertTextButton(true); 
     } else {
       toast.error('Apenas arquivos .py são permitidos!', {
         position: 'top-right',
@@ -86,15 +87,9 @@ const ActivityPage = () => {
       });
       setFileName('');
       setShowCorrectButton(false);
-      setDisableInsertTextButton(false); // Habilita o botão de Inserir Texto
-      event.target.value = ''; // Limpa o campo de arquivo
+      setDisableInsertTextButton(false); 
+      event.target.value = ''; 
     }
-  };
-
-  const handleFileClear = () => {
-    setFileName('');
-    setShowCorrectButton(false);
-    setDisableInsertTextButton(false); // Habilita o botão de Inserir Texto
   };
 
   return (
@@ -134,7 +129,7 @@ const ActivityPage = () => {
                   backgroundColor: fileName ? '#1e7e34' : '#004085',
                 },
               }}
-              //disabled={fileName} // Desativa o botão se houver um arquivo selecionado
+              
             >
               {fileName ? fileName : 'Selecionar Arquivo'}
               <input
@@ -167,32 +162,32 @@ const ActivityPage = () => {
                   backgroundColor: '#d1c4e9',
                 },
               }}
-              disabled={disableInsertTextButton} // Desativa o botão se estiver habilitado
+              disabled={disableInsertTextButton} 
             >
               Inserir Texto
             </Button>
             {showCorrectButton && (
               <Button
                 variant="outlined"
-                startIcon={<MdCheckCircle />} // Adiciona o ícone de verificação
-                onClick={handleCorrectClick} // Adiciona a função de correção
+                startIcon={<MdCheckCircle />} 
+                onClick={handleCorrectClick} 
                 sx={{
-                  marginTop: '20px', // Ajusta a margem superior
-                  padding: '10px 20px', // Ajusta o padding
-                  borderRadius: '25px', // Cantos arredondados
-                  fontSize: '16px', // Tamanho da fonte
-                  borderColor: '#4caf50', // Cor da borda
-                  color: '#4caf50', // Cor do texto
-                  transition: 'background-color 0.3s, color 0.3s, transform 0.3s', // Efeitos de transição
+                  marginTop: '20px', 
+                  padding: '10px 20px', 
+                  borderRadius: '25px', 
+                  fontSize: '16px', 
+                  borderColor: '#4caf50', 
+                  color: '#4caf50', 
+                  transition: 'background-color 0.3s, color 0.3s, transform 0.3s', 
                   '&:hover': {
-                    backgroundColor: '#4caf50', // Cor de fundo ao passar o mouse
-                    color: '#fff', // Cor do texto ao passar o mouse
-                    borderColor: '#388e3c', // Cor da borda ao passar o mouse
-                    transform: 'scale(1.05)', // Efeito de aumento ao passar o mouse
+                    backgroundColor: '#4caf50', 
+                    color: '#fff', 
+                    borderColor: '#388e3c', 
+                    transform: 'scale(1.05)', 
                   },
                   '&:active': {
-                    backgroundColor: '#388e3c', // Cor de fundo ao clicar
-                    color: '#fff', // Cor do texto ao clicar
+                    backgroundColor: '#388e3c', 
+                    color: '#fff', 
                   },
                 }}
               >
@@ -203,7 +198,6 @@ const ActivityPage = () => {
         </Grid>
       </Grid>
 
-      {/* Modal para inserir texto */}
       <Modal open={openModal} onClose={handleCloseModal} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Box sx={{ width: '600px', padding: '20px', backgroundColor: 'white', borderRadius: '8px', position: 'relative' }}>
           <IconButton
@@ -232,11 +226,11 @@ const ActivityPage = () => {
             onChange={handleTextChange}
             sx={{
               marginBottom: '20px',
-              width: '100vh', // Ajuste a largura como desejar
-              fontFamily: 'Courier New, monospace', // Fonte monoespaçada
-              fontSize: '16px', // Ajuste o tamanho da fonte conforme necessário
+              width: '100vh', 
+              fontFamily: 'Courier New, monospace', 
+              fontSize: '16px', 
               '& .MuiInputBase-input': {
-                fontFamily: 'Courier New, monospace', // Certifique-se de que a fonte é aplicada ao texto
+                fontFamily: 'Courier New, monospace', 
               },
             }}
           />
@@ -256,7 +250,7 @@ const ActivityPage = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        style={{ zIndex: 1300 }} // Garantir que o toastr fique acima de outros elementos
+        style={{ zIndex: 1300 }} 
       />
     </Container>
   );
