@@ -1,9 +1,11 @@
+
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-size: cover;
+    background-image: url("../../assets/images/bg.jpeg");
     background-position: center;
     user-select: none;
   }

@@ -35,21 +35,19 @@ const LoginPage = () => {
     try {
       setLoading(true);
 
-      const result = {
-        success: true, 
-        message: 'Credenciais válidas'
-      };
+      const result = await AuthService.authenticate(matricula, senha);
+      console.log(result)
 
-      if (result.success) {
+      if (result) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/home');
-        }, 2000); 
+        }, 1300); 
       } else {
         setErrorLoginmessage('Credenciais inválidas. Por favor, verifique e insira novamente.');
       }
     } catch {
-      setErrorLoginmessage('Falha ao fazer login');
+        setErrorLoginmessage('Credenciais inválidas. Por favor, verifique e insira novamente.');
     } finally {
       setLoading(false);
     }
@@ -92,26 +90,13 @@ const LoginPage = () => {
               sx={{ 
                 fontFamily: 'Verdana', 
                 fontSize: '16px', 
+                marginTop: '20px'
               }}
               onClick={handleLogin}
               disabled={loading} 
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
             </Button>
-            <Box mt={2}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth
-                sx={{
-                  fontFamily: 'Verdana', 
-                  fontSize: '16px', 
-                }}
-                disabled={loading} 
-              >
-                Registrar
-              </Button>
-            </Box>
             {errorLoginmessage && (
               <Typography color="error" mt={2}>
                 {errorLoginmessage}
