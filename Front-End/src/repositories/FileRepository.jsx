@@ -12,9 +12,21 @@ const fileRepository = {
       });
       return response.data;
     } catch (error) {
-      throw new Error("Falha ao fazer login");
+      throw new Error("Falha ao enviar arquivo.");
     }
   },
+  sendFileFromProfessor: async (formData) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/atividade`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error("Falha ao enviar arquivo.");
+    }
+  }
 };
 
 export default fileRepository;
