@@ -31,6 +31,7 @@ const CadastroAtividadeService = {
         arquivoFonteBase,
         pdfFile
       );
+
     } catch (error) {
       throw new Error("Erro ao salvar atividade no Banco: " + error.message);
     }
