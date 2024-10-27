@@ -4,8 +4,7 @@ const AuthService = {
     authenticate: async (matricula, senha) => {
         try {
             const data = await authRepository.authenticate(matricula, senha);
-             
-            return data.success;
+            return data;
         } catch (error) {
             throw new Error('Falha ao fazer login');
         }
