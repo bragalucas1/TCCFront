@@ -1,0 +1,125 @@
+/* HomePage.css */
+
+.home-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+    padding: 20px;
+  }
+  
+  /* Estilização do Card */
+  .MuiCard-root {
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .MuiCard-root:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Ícone de Adicionar */
+  .MuiSvgIcon-root {
+    transition: transform 0.3s ease;
+  }
+  
+  .MuiCard-root:hover .MuiSvgIcon-root {
+    transform: scale(1.1);
+  }
+  
+  /* Dialog/Modal */
+  .MuiDialog-paper {
+    border-radius: 16px !important;
+    padding: 8px;
+  }
+  
+  .MuiDialogTitle-root {
+    background: #1976d2;
+    color: white !important;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .MuiDialogContent-root {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+  
+  /* Campos de texto */
+  .MuiTextField-root {
+    margin-bottom: 16px !important;
+  }
+  
+  .MuiOutlinedInput-root {
+    border-radius: 8px;
+    background: #f8f9fa;
+  }
+  
+  .MuiOutlinedInput-root:hover {
+    background: #fff;
+  }
+  
+  /* Botões do Modal */
+  .MuiButton-contained {
+    border-radius: 8px;
+    text-transform: none;
+    padding: 8px 24px;
+    font-weight: 600;
+  }
+  
+  .MuiButton-text {
+    text-transform: none;
+    padding: 8px 24px;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 600px) {
+    .home-wrapper {
+      padding: 10px;
+    }
+    
+    .MuiCard-root {
+      width: 100% !important;
+      margin: 10px 0;
+    }
+    
+    .MuiDialog-paper {
+      margin: 10px;
+    }
+  }
+  
+  /* Animação de loading para o botão de submit */
+  @keyframes buttonLoading {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .MuiButton-contained:disabled {
+    animation: buttonLoading 1.5s infinite;
+  }
+  
+  /* Scrollbar personalizada */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #1976d2;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #1565c0;
+  }
