@@ -1,15 +1,17 @@
 const express = require('express');
-const cadastroAtividadeRoute = express.Router();
+const atividadeRoute = express.Router();
 const upload = require('../config/multerConfig');
-const CadastroAtividadeController = require('../controllers/CadastroAtividade/CadastroAtividadeController');
+const AtividadeController = require('../controllers/Atividade/AtividadeController');
 
-cadastroAtividadeRoute.post(
+atividadeRoute.post(
     '/cadastroAtividade',
     upload.fields([
       { name: 'pdfFile', maxCount: 1 },
       { name: 'sourceCodeFile', maxCount: 1 }
     ]), 
-    CadastroAtividadeController.salvarDadosAtividade
+    AtividadeController.salvarDadosAtividade
   );
   
-module.exports = cadastroAtividadeRoute;
+atividadeRoute.get('/listarAtividades', AtividadeController.listarAtividades);
+  
+module.exports = atividadeRoute;
