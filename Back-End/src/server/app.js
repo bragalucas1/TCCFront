@@ -3,6 +3,7 @@ const express = require('express');
 const prisma = require('../database/prismaClient'); // Corrigido para ir um nível acima
 const usuarioRota = require('../routes/UsuariosRotas');
 const authRoute = require('../routes/AutenticacaoRotas');
+const correctRoute = require('../routes/CorrecaoRotas');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -19,8 +20,8 @@ prisma.$connect()
         console.error('Erro ao conectar ao banco de dados:', error); // Log de erro
     });
 
-app.use(authRoute)
+app.use(authRoute);
 app.use(usuarioRota); 
-
+app.use(correctRoute);
 
 module.exports = app;

@@ -4,7 +4,7 @@ import { Button, TextField, Typography, Box, CircularProgress } from '@mui/mater
 import { CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 import './LoginPage.css'; // Certifique-se de que o caminho está correto
 import { useNavigate } from 'react-router-dom';
-import AuthService from '../../services/AuthService/AuthService';
+import AuthService from '../../services/Auth/AuthService';
 
 const LoginPage = () => {
   const [matricula, setMatricula] = useState('');

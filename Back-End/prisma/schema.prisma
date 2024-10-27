@@ -19,3 +19,8 @@ model usuarios {
   matricula String
   senha     String
 }
+
+model perfis {
+  id int @id @default(autoincrement)
+  descricao string
+}
