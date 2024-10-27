@@ -4,6 +4,7 @@ const prisma = require('../database/prismaClient'); // Corrigido para ir um nív
 const usuarioRota = require('../routes/UsuariosRotas');
 const authRoute = require('../routes/AutenticacaoRotas');
 const correctRoute = require('../routes/CorrecaoRotas');
+const cadastroAtividadeRoute = require('../routes/CadastroAtividadeRotas');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -23,5 +24,6 @@ prisma.$connect()
 app.use(authRoute);
 app.use(usuarioRota); 
 app.use(correctRoute);
+app.use(cadastroAtividadeRoute)
 
 module.exports = app;

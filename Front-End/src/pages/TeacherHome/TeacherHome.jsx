@@ -4,7 +4,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions,
   Button,
   Typography,
   TextField,
@@ -31,7 +30,8 @@ const TeacherHomepage = () => {
     title: "",
     type: "",
     content: "",
-    file: null,
+    pdfFile: null,
+    sourceCodeFile: null,
   });
 
   const activityTypes = [
@@ -48,7 +48,12 @@ const TeacherHomepage = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setNewActivity({ title: "", type: "", file: null });
+    setNewActivity({
+      title: "",
+      type: "",
+      pdfFile: null,
+      sourceCodeFile: null,
+    });
   };
 
   const handleSubmit = async () => {
@@ -56,7 +61,8 @@ const TeacherHomepage = () => {
     formData.append("title", newActivity.title);
     formData.append("type", newActivity.type);
     formData.append("content", newActivity.content || "");
-    formData.append("file", newActivity.file);
+    formData.append("pdfFile", newActivity.pdfFile);
+    formData.append("sourceCodeFile", newActivity.sourceCodeFile);
     try {
       const result = await FileService.uploadActivityFile(formData);
       if (result) {
@@ -77,15 +83,27 @@ const TeacherHomepage = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChangePDF = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
       setNewActivity((prev) => ({
         ...prev,
-        file: file,
+        pdfFile: file,
       }));
     } else {
       alert("Por favor, selecione apenas arquivos PDF");
+    }
+  };
+
+  const handleFileChangeSourceCode = (e) => {
+    const file = e.target.files[0];
+    if (file && file.name.endsWith(".py")) {
+      setNewActivity((prev) => ({
+        ...prev,
+        sourceCodeFile: file,
+      }));
+    } else {
+      alert("Por favor, selecione apenas arquivos .py");
     }
   };
 
@@ -294,42 +312,82 @@ const TeacherHomepage = () => {
             </Select>
           </FormControl>
 
-          <Box className="file-upload-box">
+          <Box
+            className="file-upload-box"
+            sx={{ display: "flex", justifyContent: "center", gap: 2 }}
+          >
             <input
               accept="application/pdf"
               style={{ display: "none" }}
               id="pdf-upload"
               type="file"
-              onChange={handleFileChange}
+              onChange={handleFileChangePDF}
             />
             <label htmlFor="pdf-upload">
               <Button
-                variant="outlined"
+                variant="contained"
                 component="span"
-                startIcon={<CloudUploadIcon />}
-                fullWidth
-                sx={{ height: "100px" }}
+                sx={{
+                  marginRight: 1,
+                  transition: "background-color 0.9s",
+                  "&:hover": {
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                  },
+                }}
               >
-                {newActivity.file
-                  ? `Arquivo selecionado: ${newActivity.file.name}`
-                  : "Clique para fazer upload do PDF"}
+                <CloudUploadIcon />
+                {newActivity.pdfFile ? newActivity.pdfFile.name : "Upload PDF"}
+              </Button>
+            </label>
+
+            <input
+              accept=".py"
+              style={{ display: "none" }}
+              id="source-code-upload"
+              type="file"
+              onChange={handleFileChangeSourceCode}
+            />
+            <label htmlFor="source-code-upload">
+              <Button
+                variant="contained"
+                component="span"
+                sx={{
+                  transition: "background-color 0.3s",
+                  "&:hover": {
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                  },
+                }}
+              >
+                <CloudUploadIcon />
+                {newActivity.sourceCodeFile
+                  ? newActivity.sourceCodeFile.name
+                  : "Upload Código Fonte"}
               </Button>
             </label>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            padding: "16px",
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <Button
+            onClick={handleClose}
+            color="primary"
+            sx={{ fontWeight: 600 }}
+          >
             Cancelar
           </Button>
           <Button
             onClick={handleSubmit}
-            variant="contained"
             color="primary"
-            disabled={
-              !newActivity.title || !newActivity.type || !newActivity.file
-            }
+            sx={{ fontWeight: 600 }}
           >
-            Cadastrar
+            Salvar
           </Button>
         </DialogActions>
       </Dialog>

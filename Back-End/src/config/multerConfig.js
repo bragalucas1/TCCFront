@@ -2,36 +2,43 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadDir = path.join(__dirname, '..', '..', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+const baseUploadDir = path.join(__dirname, '..', '..', 'uploads');
+if (!fs.existsSync(baseUploadDir)) {
+    fs.mkdirSync(baseUploadDir);
 }
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, uploadDir)
+        const activityName = req.body.title || 'atividade-geral';
+        const activityDir = path.join(baseUploadDir, activityName);
+
+        if (!fs.existsSync(activityDir)) {
+            fs.mkdirSync(activityDir, { recursive: true });
+        }
+        
+        cb(null, activityDir);
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        const uniqueSuffix = file.originalname;
+        cb(null, uniqueSuffix);
     }
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /py/;
+    const allowedTypes = /pdf|py/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    
+
     if (extname) {
         return cb(null, true);
     }
-    cb(new Error('Apenas arquivos PY!'));
+    cb(new Error('Apenas arquivos PDF e PY são permitidos!'));
 };
 
 const upload = multer({ 
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB
+        fileSize: 5 * 1024 * 1024 
     }
 });
 
