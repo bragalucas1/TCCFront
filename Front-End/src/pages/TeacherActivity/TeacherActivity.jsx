@@ -1,5 +1,5 @@
 // TeacherActivities.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Paper,
@@ -30,6 +30,7 @@ import {
   CloudUpload as CloudUploadIcon,
 } from "@mui/icons-material";
 import FileService from "../../services/File/FileService";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const TeacherActivities = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -45,7 +46,6 @@ const TeacherActivities = () => {
     sourceCodeFile: null,
   });
 
-  // Mock data
   const [activities, setActivities] = useState([
     {
       id: 1,

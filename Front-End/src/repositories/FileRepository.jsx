@@ -31,6 +31,22 @@ const fileRepository = {
       throw new Error("Falha ao enviar arquivo.");
     }
   },
+  sendFileToSaveStudents: async (formData) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/cargaAlunos`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Falha ao enviar arquivo.");
+    }
+  },
 };
 
 export default fileRepository;

@@ -16,6 +16,14 @@ const FileService = {
         } catch (error) {
             throw new Error('Falha ao enviar arquivo');
         }
+    },
+    sendFileToSaveStudents: async (formData) => {
+        try {
+            const data = await fileRepository.sendFileToSaveStudents(formData);
+            return data;
+        } catch (error) {
+            throw new Error('Falha ao enviar arquivo');
+        }
     }
 };
 

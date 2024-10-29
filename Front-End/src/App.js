@@ -40,9 +40,11 @@ function AppRoutes() {
             />
           }
         />
-        <Route path="/atividades" element={<TeacherActivities />} />
         {user?.perfil === 1 && (
-          <Route path="/alunos" element={<TeacherStudents />} />
+          <>
+            <Route path="/atividades" element={<TeacherActivities />} />
+            <Route path="/alunos" element={<TeacherStudents />} />
+          </>
         )}
       </Routes>
     </>
