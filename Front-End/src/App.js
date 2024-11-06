@@ -12,6 +12,7 @@ import Navbar from "./components/ActivityCard/Navbar/Navbar";
 import TeacherHomepage from "./pages/TeacherHome/TeacherHome";
 import TeacherStudents from "./pages/TeacherStudents/TeacherStudents";
 import TeacherActivities from "./pages/TeacherActivity/TeacherActivity";
+import ActivityPage from "./pages/Activity/Actitivity";
 
 function AppRoutes() {
   const location = useLocation();
@@ -40,6 +41,8 @@ function AppRoutes() {
             />
           }
         />
+        <Route path="/activity/:id" element={<ActivityPage />} />
+
         {user?.perfil === 1 && (
           <>
             <Route path="/atividades" element={<TeacherActivities />} />

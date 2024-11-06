@@ -1,9 +1,99 @@
 import React, { useEffect, useState } from "react";
-import { Container, Grid, Typography, Box } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Typography,
+  Box,
+  Badge,
+  Tooltip,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import ActivityCard from "../../components/ActivityCard/ActivityCard";
 import "./HomePage.css";
 import ActivitiesService from "../../services/Activities/ActivitiesService";
+
+const SubmissionStatus = ({ activity }) => {
+  console.log("Activity: ", activity);
+  const getSubmissionStatus = () => {
+    if (!activity.submissoes || activity.submissoes.length === 0) {
+      return {
+        icon: <HelpOutlineIcon />,
+        color: "grey",
+        tooltip: "Sem submissão",
+      };
+    }
+    const lastSubmission = activity.submissoes[activity.submissoes.length - 1];
+
+    if (lastSubmission.status === "Correto") {
+      return {
+        icon: <CheckCircleIcon />,
+        color: "success",
+        tooltip: "Correto",
+      };
+    }
+
+    return {
+      icon: <CancelIcon />,
+      color: "error",
+      tooltip: `${activity.submissoes[0].quantidade_sub} tentativa(s)`,
+    };
+  };
+
+  const status = getSubmissionStatus();
+
+  return (
+    <Box
+      sx={{
+        position: "absolute",
+        top: "16px",
+        right: "16px",
+        zIndex: 1,
+        display: "flex",
+        alignItems: "center",
+        height: "40px",
+      }}
+    >
+      <Tooltip
+        title={status.tooltip}
+        placement="top"
+        arrow
+        sx={{
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          fontSize: "14px",
+        }}
+      >
+        <Badge
+          badgeContent={activity.submissoes[0].quantidade_sub || 0}
+          color={status.color}
+          sx={{
+            cursor: "pointer",
+            "& .MuiBadge-badge": {
+              right: -3,
+              top: 3,
+              border: `2px solid #fff`,
+              padding: "0 4px",
+            },
+          }}
+        >
+          {React.cloneElement(status.icon, {
+            sx: {
+              fontSize: 24,
+              color:
+                status.color === "success"
+                  ? "#4caf50"
+                  : status.color === "error"
+                  ? "#f44336"
+                  : "#9e9e9e",
+            },
+          })}
+        </Badge>
+      </Tooltip>
+    </Box>
+  );
+};
 
 const Homepage = () => {
   const [activities, setActivities] = useState([]);
@@ -29,7 +119,7 @@ const Homepage = () => {
       justifyContent="center"
       sx={{
         width: "100%",
-        height: "calc(100vh - 100px)", // Ajusta para altura total menos o header/padding
+        height: "calc(100vh - 100px)",
         position: "absolute",
         top: 0,
         left: 0,
@@ -63,8 +153,8 @@ const Homepage = () => {
       maxWidth={false}
       style={{
         padding: "20px",
-        position: "relative", // Adiciona posição relativa ao container
-        minHeight: "calc(100vh - 40px)", // Altura total menos padding
+        position: "relative",
+        minHeight: "calc(100vh - 40px)",
       }}
     >
       {activities.length > 0 ? (
@@ -76,12 +166,15 @@ const Homepage = () => {
         >
           {activities.map((activity, index) => (
             <Grid item key={index}>
-              <ActivityCard
-                title={activity.nome}
-                summary={activity.tipo}
-                content={activity.conteudo}
-                endpoints={activity.endpoints}
-              />
+              <Box sx={{ position: "relative" }}>
+                <SubmissionStatus activity={activity} />
+                <ActivityCard
+                  title={activity.nome}
+                  summary={activity.tipo}
+                  content={activity.conteudo}
+                  activity={activity}
+                />
+              </Box>
             </Grid>
           ))}
         </Grid>

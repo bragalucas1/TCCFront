@@ -23,6 +23,7 @@ const AtividadeRepository = {
         conteudo: true,
         caminho_pdf: true,
         caminho_codigo_base: true,
+        submissoes: true, 
       },
     });
   },
@@ -40,7 +41,7 @@ const AtividadeRepository = {
       },
     });
   },
-  editarAtividade: async(atividade) => {
+  editarAtividade: async (atividade) => {
     return await prisma.atividades.update({
       where: {
         id: Number(atividade.id),
@@ -53,7 +54,14 @@ const AtividadeRepository = {
         caminho_codigo_base: atividade.caminho_codigo_base,
       },
     });
-  }
+  },
+  listarAtividadePeloId: async (id) => {
+    return await prisma.atividades.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+  },
 };
 
 module.exports = AtividadeRepository;

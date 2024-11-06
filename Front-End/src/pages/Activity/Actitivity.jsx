@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Grid,
@@ -14,8 +14,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { MdClose } from "react-icons/md";
 import FileService from "../../services/File/FileService";
+import { useLocation } from "react-router-dom";
 
 const ActivityPage = () => {
+  const { state } = useLocation();
+  const activity = state?.activity;
   const [openModal, setOpenModal] = useState(false);
   const [inputText, setInputText] = useState("");
   const [fileName, setFileName] = useState("");
@@ -23,6 +26,38 @@ const ActivityPage = () => {
   const [showCorrectButton, setShowCorrectButton] = useState(false);
   const [disableInsertTextButton, setDisableInsertTextButton] = useState(false);
   const [file, setFile] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(null);
+
+  useEffect(() => {
+    if (activity?.caminho_pdf) {
+      if (activity.caminho_pdf.startsWith("http")) {
+        setPdfUrl(activity.caminho_pdf);
+      } else {
+        try {
+          const filePath = activity.caminho_pdf;
+          fetch(filePath)
+            .then((response) => response.blob())
+            .then((blob) => {
+              const url = URL.createObjectURL(blob);
+              setPdfUrl(url);
+            })
+            .catch((error) => {
+              console.error("Erro ao carregar o PDF:", error);
+              toast.error("Erro ao carregar o PDF local");
+            });
+        } catch (error) {
+          console.error("Erro ao processar o caminho do PDF:", error);
+          toast.error("Erro ao processar o caminho do PDF");
+        }
+      }
+    }
+
+    return () => {
+      if (pdfUrl && !pdfUrl.startsWith("http")) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [activity]);
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => {
@@ -36,12 +71,16 @@ const ActivityPage = () => {
   };
 
   const handleFileSend = async (file) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const activityId = activity.id;
+
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("userId", user.id);
+    formData.append("activityId", activityId);
 
     try {
       const result = await FileService.sendFile(formData);
-      console.log(result);
     } catch (error) {
       throw new Error("Falha ao enviar arquivo");
     }
@@ -123,24 +162,42 @@ const ActivityPage = () => {
           item
           xs={12}
           md={6}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            paddingRight: "20px",
-            borderRight: "1px solid #e0e0e0",
-          }}
+          sx={{ paddingRight: "20px", borderRight: "1px solid #e0e0e0" }}
         >
           <Typography
             variant="h6"
             component="div"
             sx={{ marginBottom: "20px" }}
           >
-            Texto da Atividade
+            Visualização da Atividade
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Aqui está o texto da atividade que precisa ser desenvolvido. Este é
-            um exemplo de como você pode formatar o texto.
-          </Typography>
+          {pdfUrl ? (
+            <object
+              data={pdfUrl}
+              type="application/pdf"
+              width="100%"
+              height="600px"
+              style={{ border: "1px solid #e0e0e0", borderRadius: "8px" }}
+            >
+              <embed
+                src={pdfUrl}
+                type="application/pdf"
+                width="100%"
+                height="600px"
+              />
+              <p>
+                Seu navegador não possui um plugin para PDF. Você pode{" "}
+                <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+                  baixar o arquivo aqui
+                </a>
+                .
+              </p>
+            </object>
+          ) : (
+            <Typography variant="body1" color="text.secondary">
+              PDF não disponível.
+            </Typography>
+          )}
         </Grid>
         <Grid
           item

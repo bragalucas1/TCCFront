@@ -297,7 +297,7 @@ const TeacherActivities = () => {
       formData.append("nome", newActivity.nome);
       formData.append("tipo", newActivity.tipo);
       formData.append("conteudo", newActivity.conteudo);
-      // Usando os estados dos arquivos diretamente
+
       if (selectedPdf) {
         formData.append("caminho_pdf", selectedPdf);
       }
@@ -394,7 +394,7 @@ const TeacherActivities = () => {
         formData.append("caminho_codigo_base", selectedCode);
       }
 
-      const result = await ActivitiesService.editActivity(formData);
+      await ActivitiesService.editActivity(formData);
 
       setActivities((prev) =>
         prev.map((activity) =>
@@ -429,8 +429,7 @@ const TeacherActivities = () => {
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     try {
-      console.log(deletingActivity);
-      const result = ActivitiesService.deleteActivity(
+      await ActivitiesService.deleteActivity(
         deletingActivity.id,
         deletingActivity.nome
       );

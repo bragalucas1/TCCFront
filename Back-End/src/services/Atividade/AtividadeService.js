@@ -1,9 +1,6 @@
 const path = require("path");
 const fs = require("fs").promises;
 const AtividadeRepository = require("../../repository/Atividade/AtividadeRepository");
-const {
-  editarAtividade,
-} = require("../../controllers/Atividade/AtividadeController");
 
 const AtividadeService = {
   listarAtividades: async () => {
@@ -106,6 +103,7 @@ const AtividadeService = {
   },
   buscarAtividadePorId: async (id) => {
     try {
+      console.log("Buscando atividade por id:", id);
       const atividade = await AtividadeRepository.buscarAtividadePorId(
         Number(id)
       );
