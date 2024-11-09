@@ -75,8 +75,12 @@ const ActivityPage = () => {
     const activityId = activity.id;
 
     const formData = new FormData();
+    formData.append("nome", activity.nome);
+    formData.append("perfilSubmissao", "aluno");
+    formData.append("nomeUsuario", user.nome);
     formData.append("file", file);
     formData.append("userId", user.id);
+    formData.append("userName", user.nome);
     formData.append("activityId", activityId);
 
     try {

@@ -35,11 +35,16 @@ import {
   CloudUpload as CloudUploadIcon,
   Search as SearchIcon,
   Warning as WarningIcon,
+  Assignment as AssignmentIcon,
+  Cancel as CancelIcon,
+  Person as PersonIcon,
 } from "@mui/icons-material";
 import FileService from "../../services/File/FileService";
 import { CheckCircleIcon } from "lucide-react";
 import ActivitiesService from "../../services/Activities/ActivitiesService";
+import UserService from "../../services/User/UserService";
 
+import CodeIcon from "@mui/icons-material/Code";
 const TeacherActivities = () => {
   const initialActivityState = {
     nome: "",
@@ -65,23 +70,9 @@ const TeacherActivities = () => {
     type: "success",
     message: "",
   });
-  const getFileName = (path) => {
-    if (!path) return "";
-    const partsBackslash = path.split("\\");
-    if (partsBackslash.length > 1) {
-      return partsBackslash.pop();
-    }
-    const partsSlash = path.split("/");
-    return partsSlash.pop();
-  };
-  const displayFileName = (file, path) => {
-    if (file) {
-      return file.name;
-    } else if (path) {
-      return getFileName(path);
-    }
-    return "";
-  };
+  const [openSubmissions, setOpenSubmissions] = useState(false);
+  const [selectedActivitySubmissions, setSelectedActivitySubmissions] =
+    useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addFeedback, setAddFeedback] = useState({
     show: false,
@@ -95,6 +86,36 @@ const TeacherActivities = () => {
     caminho_pdf: false,
     caminho_codigo_base: false,
   });
+  const [openCodeModal, setOpenCodeModal] = useState(false);
+  const [editFeedback, setEditFeedback] = useState({
+    show: false,
+    type: "success",
+    message: "",
+  });
+  const [editValidationErrors, setEditValidationErrors] = useState({
+    nome: false,
+    tipo: false,
+    conteudo: false,
+  });
+
+  const getFileName = (path) => {
+    if (!path) return "";
+    const partsBackslash = path.split("\\");
+    if (partsBackslash.length > 1) {
+      return partsBackslash.pop();
+    }
+    const partsSlash = path.split("/");
+    return partsSlash.pop();
+  };
+
+  const displayFileName = (file, path) => {
+    if (file) {
+      return file.name;
+    } else if (path) {
+      return getFileName(path);
+    }
+    return "";
+  };
 
   const handleCloseAdd = () => {
     if (!isSubmitting) {
@@ -121,8 +142,8 @@ const TeacherActivities = () => {
       nome: !newActivity.nome.trim(),
       tipo: !newActivity.tipo.trim(),
       conteudo: !newActivity.conteudo.trim(),
-      caminho_pdf: !selectedPdf, // Alterado para checar selectedPdf
-      caminho_codigo_base: !selectedCode, // Alterado para checar selectedCode
+      caminho_pdf: !selectedPdf,
+      caminho_codigo_base: !selectedCode,
     };
 
     setValidationErrors(errors);
@@ -165,11 +186,18 @@ const TeacherActivities = () => {
     "Lista de Exercícios",
   ];
 
+  const getStatusIcon = (status) => {
+    return status === "Correto" ? (
+      <CheckCircleIcon sx={{ color: "success.main" }} />
+    ) : (
+      <CancelIcon sx={{ color: "error.main" }} />
+    );
+  };
+
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         const response = await ActivitiesService.getAllActivities();
-        console.log(response);
         setActivities(response.atividades);
         setShouldFetchActivities(false);
       } catch (error) {
@@ -189,7 +217,7 @@ const TeacherActivities = () => {
   };
 
   const handleEdit = (activity) => {
-    setEditFeedback({ show: false, type: "success", message: "" }); // Reseta o feedback
+    setEditFeedback({ show: false, type: "success", message: "" });
     setEditingActivity(activity);
     setOpenEdit(true);
   };
@@ -222,7 +250,7 @@ const TeacherActivities = () => {
       if (isEditing && editingActivity) {
         setEditingActivity({
           ...editingActivity,
-          caminho_pdf: file.name, // Armazena apenas o nome do arquivo
+          caminho_pdf: file.name,
         });
       }
     } else {
@@ -240,7 +268,7 @@ const TeacherActivities = () => {
       if (isEditing && editingActivity) {
         setEditingActivity({
           ...editingActivity,
-          caminho_codigo_base: file.name, // Armazena apenas o nome do arquivo
+          caminho_codigo_base: file.name,
         });
       }
     } else {
@@ -259,9 +287,9 @@ const TeacherActivities = () => {
       justifyContent="center"
       sx={{
         width: "100%",
-        height: "calc(100vh - 200px)", // Ajustado para considerar o header da página
+        height: "calc(100vh - 200px)",
         position: "absolute",
-        top: "100px", // Ajustado para ficar abaixo do header
+        top: "100px",
         left: 0,
         right: 0,
         bottom: 0,
@@ -341,17 +369,6 @@ const TeacherActivities = () => {
       setIsSubmitting(false);
     }
   };
-
-  const [editFeedback, setEditFeedback] = useState({
-    show: false,
-    type: "success",
-    message: "",
-  });
-  const [editValidationErrors, setEditValidationErrors] = useState({
-    nome: false,
-    tipo: false,
-    conteudo: false,
-  });
 
   const validateEditForm = () => {
     const errors = {
@@ -461,6 +478,18 @@ const TeacherActivities = () => {
     }
   };
 
+  const handleViewSubmissions = (activity) => {
+    console.log(activity);
+    setSelectedActivitySubmissions(activity);
+    setOpenSubmissions(true);
+  };
+
+  const handleViewCode = (code) => {
+    console.log(code);
+    setSelectedCode(code);
+    setOpenCodeModal(true);
+  };
+
   return (
     <Container
       disableGutters
@@ -519,6 +548,9 @@ const TeacherActivities = () => {
                 <TableCell sx={{ fontWeight: 600 }}>Título</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Tipo</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Conteúdo</TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="center">
+                  Submissões
+                </TableCell>
                 <TableCell align="center" sx={{ fontWeight: 600 }}>
                   Ações
                 </TableCell>
@@ -537,6 +569,20 @@ const TeacherActivities = () => {
                   <TableCell>{activity.nome}</TableCell>
                   <TableCell>{activity.tipo}</TableCell>
                   <TableCell>{activity.conteudo}</TableCell>
+                  <TableCell align="center">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<AssignmentIcon />}
+                      onClick={() => handleViewSubmissions(activity)}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      Ver Submissões
+                    </Button>
+                  </TableCell>
                   <TableCell align="center">
                     <Box
                       sx={{ display: "flex", justifyContent: "center", gap: 1 }}
@@ -573,7 +619,6 @@ const TeacherActivities = () => {
       ) : (
         <EmptyState />
       )}
-
       <Dialog
         open={openAdd}
         onClose={handleCloseAdd}
@@ -770,7 +815,6 @@ const TeacherActivities = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Dialog
         open={openEdit}
         onClose={handleCloseEdit}
@@ -966,7 +1010,6 @@ const TeacherActivities = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Dialog
         open={openDelete}
         onClose={() => setOpenDelete(false)}
@@ -1057,6 +1100,205 @@ const TeacherActivities = () => {
               </Button>
             </Box>
           </Fade>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openSubmissions}
+        onClose={() => setOpenSubmissions(false)}
+        maxWidth="md"
+        fullWidth
+        TransitionComponent={Grow}
+        TransitionProps={{
+          timeout: 500,
+        }}
+        PaperProps={{
+          sx: {
+            borderRadius: "20px",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+            background: "linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%)",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)",
+            color: "white",
+            fontSize: "1.5rem",
+            padding: "24px 32px",
+            fontWeight: 600,
+          }}
+        >
+          Submissões - {selectedActivitySubmissions?.nome}
+        </DialogTitle>
+        <DialogContent sx={{ padding: "32px !important" }}>
+          {selectedActivitySubmissions?.submissoes?.length > 0 ? (
+            <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <PersonIcon />
+                        Nome do aluno
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      Quantidade de Submissões
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      Data da Última Submissão
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Código</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedActivitySubmissions.submissoes.map((submission) => (
+                    <TableRow
+                      key={submission.id}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#f8f9fa",
+                        },
+                      }}
+                    >
+                      <TableCell>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          {submission.nome_usuario}
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {submission.quantidade_sub}
+                      </TableCell>
+                      <TableCell>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          {getStatusIcon(submission.status)}
+                          {submission.status}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(submission.data_submissao).toLocaleString(
+                          "pt-BR",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => handleViewCode(submission.codigo)}
+                          sx={{
+                            color: "#1976d2",
+                            "&:hover": {
+                              backgroundColor: "rgba(25, 118, 210, 0.04)",
+                            },
+                          }}
+                        >
+                          <CodeIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography
+              variant="body1"
+              sx={{ textAlign: "center", color: "#666" }}
+            >
+              Nenhuma submissão encontrada para esta atividade.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions
+          sx={{
+            padding: "16px 32px",
+            justifyContent: "center",
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <Button
+            onClick={() => setOpenSubmissions(false)}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              minWidth: "120px",
+            }}
+          >
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openCodeModal}
+        onClose={() => setOpenCodeModal(false)}
+        maxWidth="md"
+        fullWidth
+        TransitionComponent={Grow}
+        TransitionProps={{
+          timeout: 500,
+        }}
+        PaperProps={{
+          sx: {
+            borderRadius: "20px",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+            background: "linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%)",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)",
+            color: "white",
+            fontSize: "1.5rem",
+            padding: "24px 32px",
+            fontWeight: 600,
+          }}
+        >
+          Código Submetido
+        </DialogTitle>
+        <DialogContent sx={{ padding: "32px !important" }}>
+          <Box
+            sx={{
+              backgroundColor: "#f5f5f5",
+              padding: "20px",
+              borderRadius: "8px",
+              fontFamily: "monospace",
+              whiteSpace: "pre-wrap",
+              overflowX: "auto",
+            }}
+          >
+            {selectedCode}
+          </Box>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            padding: "16px 32px",
+            justifyContent: "center",
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <Button
+            onClick={() => setOpenCodeModal(false)}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              minWidth: "120px",
+            }}
+          >
+            Fechar
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

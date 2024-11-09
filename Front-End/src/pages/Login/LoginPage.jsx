@@ -1,4 +1,3 @@
-// src/pages/LoginPage.js
 import React, { useState } from "react";
 import {
   Button,
@@ -8,7 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { CheckCircle as CheckCircleIcon } from "@mui/icons-material";
-import "./LoginPage.css"; // Certifique-se de que o caminho está correto
+import "./LoginPage.css";  
 import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/Auth/AuthService";
 import { useAuth } from "../../context/AuthContext";
@@ -18,8 +17,8 @@ const LoginPage = () => {
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
   const [errorLoginmessage, setErrorLoginmessage] = useState("");
-  const [loading, setLoading] = useState(false); // Adicionado para controle de carregamento
-  const [success, setSuccess] = useState(false); // Adicionado para controle de sucesso
+  const [loading, setLoading] = useState(false); 
+  const [success, setSuccess] = useState(false); 
   const navigate = useNavigate();
   const {updateUser} = useAuth();
   const { login } = useAuth();

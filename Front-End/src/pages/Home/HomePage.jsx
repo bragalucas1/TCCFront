@@ -16,13 +16,13 @@ import "./HomePage.css";
 import ActivitiesService from "../../services/Activities/ActivitiesService";
 
 const SubmissionStatus = ({ activity }) => {
-  console.log("Activity: ", activity);
   const getSubmissionStatus = () => {
     if (!activity.submissoes || activity.submissoes.length === 0) {
       return {
         icon: <HelpOutlineIcon />,
         color: "grey",
         tooltip: "Sem submissão",
+        quantidade: 0,
       };
     }
     const lastSubmission = activity.submissoes[activity.submissoes.length - 1];
@@ -32,13 +32,15 @@ const SubmissionStatus = ({ activity }) => {
         icon: <CheckCircleIcon />,
         color: "success",
         tooltip: "Correto",
+        quantidade: lastSubmission.quantidade_sub,
       };
     }
 
     return {
       icon: <CancelIcon />,
       color: "error",
-      tooltip: `${activity.submissoes[0].quantidade_sub} tentativa(s)`,
+      tooltip: `${lastSubmission.quantidade_sub} tentativa(s)`,
+      quantidade: lastSubmission.quantidade_sub,
     };
   };
 
@@ -66,7 +68,7 @@ const SubmissionStatus = ({ activity }) => {
         }}
       >
         <Badge
-          badgeContent={activity.submissoes[0].quantidade_sub || 0}
+          badgeContent={status.quantidade}
           color={status.color}
           sx={{
             cursor: "pointer",

@@ -1,15 +1,18 @@
-const fs = require("fs");
 const { spawn } = require("child_process");
-const path = require("path");
 const AtividadeService = require("../Atividade/AtividadeService");
 const CorrecaoRepository = require("../../repository/Correcao/CorrecaoRepository");
+const ArquivoService = require("../Arquivo/ArquivoService");
 
 const CorrecaoService = {
-  fluxoDeCorrecao: async (file, userId, activityId) => {
+  fluxoDeCorrecao: async (file, userId, userName, activityId) => {
     try {
       const arquivoAluno = file.path;
       const atividadeBase = await AtividadeService.buscarAtividadePorId(
         Number(activityId)
+      );
+
+      const conteudoArquivoComprimido = await ArquivoService.comprimirArquivo(
+        file.path
       );
 
       const saidaAluno = await CorrecaoService.executaPython(arquivoAluno);
@@ -25,8 +28,10 @@ const CorrecaoService = {
 
       await CorrecaoService.atualizarSubmissao(
         userId,
+        userName,
         activityId,
-        resultado.correto ? "Correto" : "Incorreto"
+        resultado.correto ? "Correto" : "Incorreto",
+        conteudoArquivoComprimido
       );
 
       return resultado;
@@ -59,12 +64,20 @@ const CorrecaoService = {
       });
     });
   },
-  atualizarSubmissao: async (userId, activityId, status) => {
+  atualizarSubmissao: async (
+    userId,
+    userName,
+    activityId,
+    status,
+    conteudoArquivoComprimido
+  ) => {
     try {
       await CorrecaoRepository.atualizarSubmissao(
         Number(userId),
+        userName,
         Number(activityId),
-        status
+        status,
+        conteudoArquivoComprimido
       );
     } catch (error) {
       console.error("Erro ao atualizar submissão:", error);

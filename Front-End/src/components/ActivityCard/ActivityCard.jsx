@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
 import { PenLine } from "lucide-react";
-import { MdArrowForward } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const ActivityCard = ({ title, summary, content, activity }) => {
@@ -123,13 +122,13 @@ const ActivityCard = ({ title, summary, content, activity }) => {
             <Typography
               variant="body2"
               sx={{
-                fontFamily: "Inter, system-ui, sans-serif", // Modern font stack
+                fontFamily: "Inter, system-ui, sans-serif",
                 fontSize: "15px",
                 color: "#4a5568",
                 lineHeight: 1.7,
                 textAlign: "center",
                 letterSpacing: "0.01em",
-                fontWeight: 450, // Slightly bolder than normal
+                fontWeight: 450,
                 WebkitFontSmoothing: "antialiased",
                 MozOsxFontSmoothing: "grayscale",
                 "& strong": {

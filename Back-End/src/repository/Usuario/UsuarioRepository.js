@@ -13,6 +13,15 @@ const UsuarioRepository = {
                 senha: senha
             }
         });
+    },
+    findByIds: async (ids) => {
+        return await prisma.usuarios.findMany({
+            where: {
+                id: {
+                    in: ids
+                }
+            }
+        });
     }
 };
 

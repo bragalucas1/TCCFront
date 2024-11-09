@@ -23,6 +23,11 @@ const storage = multer.diskStorage({
     cb(null, activityDir);
   },
   filename: function (req, file, cb) {
+    if(req.body.perfilSubmissao === 'aluno'){
+      const uniqueSuffix = `${req.body.nomeUsuario}-${file.originalname}`;
+      return cb(null, uniqueSuffix);
+    }
+    
     const uniqueSuffix = file.originalname;
     cb(null, uniqueSuffix);
   },

@@ -1,12 +1,27 @@
 const path = require("path");
 const fs = require("fs").promises;
 const AtividadeRepository = require("../../repository/Atividade/AtividadeRepository");
+const ArquivoService = require("../Arquivo/ArquivoService");
 
 const AtividadeService = {
   listarAtividades: async () => {
     try {
       const atividades = await AtividadeRepository.listarAtividades();
-      return atividades;
+      const atividadesProcessadas = await Promise.all(
+        atividades.map(async (atividade) => {
+          if (atividade.submissoes.length > 0) {
+            const submissoesProcessadas =
+              await ArquivoService.processasSubmissoes(atividade.submissoes);
+            return {
+              ...atividade,
+              submissoes: submissoesProcessadas,
+            };
+          }
+          return atividade;
+        })
+      );
+
+      return atividadesProcessadas;
     } catch (error) {
       throw new Error("Erro ao listar atividades no Banco: " + error.message);
     }
@@ -34,6 +49,7 @@ const AtividadeService = {
       const atividades = await AtividadeRepository.removerAtividade(id);
       return atividades;
     } catch (error) {
+      console.log(error);
       throw new Error("Erro ao remover atividade no Banco: " + error.message);
     }
   },
@@ -55,7 +71,7 @@ const AtividadeService = {
         const caminhoArquivo = path.join(diretorioAtividade, arquivo);
         try {
           await fs.unlink(caminhoArquivo);
-          console.log(`Arquivo removido: ${caminhoArquivo}`);
+          // console.log(`Arquivo removido: ${caminhoArquivo}`);
         } catch (error) {
           console.error(`Erro ao remover arquivo ${caminhoArquivo}:`, error);
           throw new Error(`Falha ao remover arquivo: ${arquivo}`);
@@ -64,7 +80,7 @@ const AtividadeService = {
 
       try {
         await fs.rmdir(diretorioAtividade);
-        console.log(`Diretório removido: ${diretorioAtividade}`);
+        // console.log(`Diretório removido: ${diretorioAtividade}`);
       } catch (error) {
         console.error(
           `Erro ao remover diretório ${diretorioAtividade}:`,
@@ -72,7 +88,7 @@ const AtividadeService = {
         );
         try {
           await fs.rm(diretorioAtividade, { recursive: true, force: true });
-          console.log(`Diretório removido forçadamente: ${diretorioAtividade}`);
+          // console.log(`Diretório removido forçadamente: ${diretorioAtividade}`);
         } catch (finalError) {
           console.error(
             `Falha total ao remover diretório ${diretorioAtividade}:`,
@@ -97,13 +113,11 @@ const AtividadeService = {
       );
       return atividade;
     } catch (error) {
-      console.log(error);
       throw new Error("Erro ao editar atividade no Banco: " + error.message);
     }
   },
   buscarAtividadePorId: async (id) => {
     try {
-      console.log("Buscando atividade por id:", id);
       const atividade = await AtividadeRepository.buscarAtividadePorId(
         Number(id)
       );
@@ -184,7 +198,6 @@ const AtividadeService = {
       // Se tem novo PDF
       if (arquivos.caminho_pdf) {
         if (atividadeAtual.caminho_pdf) {
-          console.log("tem caminho");
           try {
             await fs.unlink(atividadeAtual.caminho_pdf);
           } catch (error) {

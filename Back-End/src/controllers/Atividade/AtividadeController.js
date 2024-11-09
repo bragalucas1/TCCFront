@@ -15,9 +15,7 @@ const AtividadeController = {
   },
   listarAtividades: async (req, res) => {
     try {
-      console.log("Listando atividades ccc...");
       const atividades = await AtividadeService.listarAtividades();
-      console.log("Atividades:");
       res.status(200).json({ success: true, atividades });
     } catch (error) {
       console.log(error);
