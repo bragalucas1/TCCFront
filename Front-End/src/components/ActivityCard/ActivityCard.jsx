@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 import { PenLine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,7 @@ const ActivityCard = ({ title, summary, content, activity }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/activity/${activity.id}`, { state: { activity } });
+    navigate(`/activity/${activity.nome}`, { state: { activity } });
   };
 
   return (

@@ -26,6 +26,16 @@ const ActivitiesService = {
       throw new Error("Falha ao enviar requisição para editar atividade.");
     }
   },
+  findActivityById: async (id) => {
+    try {
+      const data = await activitiesRepository.findActivityById(id);
+      return data;
+    } catch (error) {
+      throw new Error(
+        "Falha ao enviar requisição para encontrar atividade pelo id."
+      );
+    }
+  },
 };
 
 export default ActivitiesService;
