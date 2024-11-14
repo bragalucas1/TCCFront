@@ -26,17 +26,16 @@ const ActivityPage = () => {
         activity.id
       );
 
-      console.log(updatedActivity);
-      setCurrentActivity(updatedActivity);
-      if (updatedActivity?.submissoes?.length > 0) {
-        const ultimaSubmissao = updatedActivity.submissoes[0];
+      setCurrentActivity(updatedActivity.atividade);
+      if (currenctActivity?.submissoes) {
+        const ultimaSubmissao = currenctActivity.submissoes[0];
         setUltimaSubmissao({
           status: ultimaSubmissao.status,
           tipo: ultimaSubmissao.status === "Correto" ? "correto" : "incorreto",
           mensagem:
             ultimaSubmissao.status === "Correto"
-              ? "Sua resposta está correta!"
-              : "Sua resposta está incorreta.",
+              ? "Sua ultima submissão estava correta!"
+              : "Sua ultima submissão estava incorreta.",
         });
       }
     } catch (error) {
@@ -221,8 +220,8 @@ const ActivityPage = () => {
               alignItems: "center",
               width: "100%",
               maxWidth: "400px",
-              margin: "0 auto", // Centraliza horizontalmente
-              marginTop: "100px", // Ajusta espaço do topo
+              margin: "0 auto", 
+              marginTop: "100px", 
             }}
           >
             <Typography
@@ -319,7 +318,7 @@ const ActivityPage = () => {
                 gap: "10px",
                 width: "100%",
                 maxWidth: "400px",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)", // Adicionado sombra sutil
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)", 
               }}
             >
               {resultadoCorrecao ? (
@@ -350,7 +349,6 @@ const ActivityPage = () => {
                   </Typography>
                 </>
               ) : (
-                // Ícones para última submissão
                 <>
                   {ultimaSubmissao.tipo === "correto" ? (
                     <MdCheckCircle size={40} color="#28a745" />
@@ -373,7 +371,6 @@ const ActivityPage = () => {
               )}
             </Box>
           )}
-          {/* Novo componente de resultado */}
         </Grid>
       </Grid>
 
