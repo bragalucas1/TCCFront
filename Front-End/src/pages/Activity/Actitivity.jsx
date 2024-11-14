@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Grid,
-  Typography,
-  Button,
-  Box,
-  Modal,
-  TextField,
-  IconButton,
-} from "@mui/material";
-import { MdCheckCircle, MdUpload } from "react-icons/md";
+import { Container, Grid, Typography, Button, Box } from "@mui/material";
+import { MdCheckCircle, MdError, MdUpload } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { MdClose } from "react-icons/md";
 import FileService from "../../services/File/FileService";
 import { useLocation } from "react-router-dom";
+import ActivitiesService from "../../services/Activities/ActivitiesService";
 
 const ActivityPage = () => {
   const { state } = useLocation();
   const activity = state?.activity;
-  const [openModal, setOpenModal] = useState(false);
-  const [inputText, setInputText] = useState("");
+  const [ultimaSubmissao, setUltimaSubmissao] = useState(null);
+  const [resultadoCorrecao, setResultadoCorrecao] = useState(null);
+  const [mensagemResultado, setMensagemResultado] = useState("");
   const [fileName, setFileName] = useState("");
-  const [isTextInput, setIsTextInput] = useState(false);
   const [showCorrectButton, setShowCorrectButton] = useState(false);
-  const [disableInsertTextButton, setDisableInsertTextButton] = useState(false);
   const [file, setFile] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [currenctActivity, setCurrentActivity] = useState(activity);
+
+  const fetchUpdatedActivity = async () => {
+    try {
+      const updatedActivity = await ActivitiesService.findActivityById(
+        activity.id
+      );
+
+      setCurrentActivity(updatedActivity.atividade);
+      if (currenctActivity?.submissoes) {
+        const ultimaSubmissao = currenctActivity.submissoes[0];
+        setUltimaSubmissao({
+          status: ultimaSubmissao.status,
+          tipo: ultimaSubmissao.status === "Correto" ? "correto" : "incorreto",
+          mensagem:
+            ultimaSubmissao.status === "Correto"
+              ? "Sua ultima submissão estava correta!"
+              : "Sua ultima submissão estava incorreta.",
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar atividade:", error);
+    }
+  };
 
   useEffect(() => {
     if (activity?.caminho_pdf) {
@@ -59,16 +74,11 @@ const ActivityPage = () => {
     };
   }, [activity]);
 
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setIsTextInput(true);
-  };
-
-  const handleTextChange = (event) => {
-    setInputText(event.target.value);
-    setShowCorrectButton(true);
-  };
+  useEffect(() => {
+    if (activity?.id) {
+      fetchUpdatedActivity();
+    }
+  }, [activity?.id]);
 
   const handleFileSend = async (file) => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -85,47 +95,43 @@ const ActivityPage = () => {
 
     try {
       const result = await FileService.sendFile(formData);
+
+      return result.success;
     } catch (error) {
       throw new Error("Falha ao enviar arquivo");
     }
   };
 
-  const handleCorrectClick = () => {
-    if (isTextInput) {
-      toast.success("Texto enviado com sucesso!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        style: {
-          fontFamily: "Verdana, sans-serif",
-          backgroundColor: "#d4edda",
-          color: "#155724",
-        },
-      });
+  const handleCorrectClick = async () => {
+    setUltimaSubmissao(null);
+    toast.info("Arquivo enviado com sucesso!", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      style: {
+        fontFamily: "Verdana, sans-serif",
+        backgroundColor: "#d4edda",
+        color: "#155724",
+      },
+    });
+
+    const result = await handleFileSend(file);
+
+    if (result.erro) {
+      setResultadoCorrecao("erro");
+      setMensagemResultado(result.detalhesErro.descricao);
+    } else if (result.correto) {
+      setResultadoCorrecao("correto");
+      setMensagemResultado("Parabéns! Sua resposta está correta!");
     } else {
-      handleFileSend(file);
-      toast.success("Arquivo enviado com sucesso!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        style: {
-          fontFamily: "Verdana, sans-serif",
-          backgroundColor: "#d4edda",
-          color: "#155724",
-        },
-      });
+      setResultadoCorrecao("incorreto");
+      setMensagemResultado("Resposta incorreta. Tente novamente!");
     }
     setFileName("");
-    setInputText("");
-    setDisableInsertTextButton(false);
     setShowCorrectButton(false);
   };
 
@@ -134,7 +140,6 @@ const ActivityPage = () => {
     if (file && file.name.endsWith(".py")) {
       setFileName(file.name);
       setShowCorrectButton(true);
-      setDisableInsertTextButton(true);
       setFile(file);
     } else {
       toast.error("Apenas arquivos .py são permitidos!", {
@@ -153,7 +158,6 @@ const ActivityPage = () => {
       });
       setFileName("");
       setShowCorrectButton(false);
-      setDisableInsertTextButton(false);
       setFile(null);
       event.target.value = "";
     }
@@ -214,10 +218,10 @@ const ActivityPage = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              position: "absolute",
-              top: "30%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              width: "100%",
+              maxWidth: "400px",
+              margin: "0 auto", 
+              marginTop: "100px", 
             }}
           >
             <Typography
@@ -262,36 +266,6 @@ const ActivityPage = () => {
                 onChange={handleFileChange}
               />
             </Button>
-            <Typography
-              variant="body2"
-              sx={{ fontStyle: "italic", color: "#9e9e9e", margin: "10px 0" }}
-            >
-              OU
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={handleOpenModal}
-              sx={{
-                padding: "8px 20px",
-                borderRadius: "25px",
-                fontSize: "14px",
-                borderColor: "#3f51b5",
-                color: "#3f51b5",
-                transition: "background-color 0.3s, transform 0.3s",
-                "&:hover": {
-                  borderColor: "#2c387e",
-                  color: "#2c387e",
-                  backgroundColor: "#e8eaf6",
-                  transform: "scale(1.05)",
-                },
-                "&:active": {
-                  backgroundColor: "#d1c4e9",
-                },
-              }}
-              disabled={disableInsertTextButton}
-            >
-              Inserir Texto
-            </Button>
             {showCorrectButton && (
               <Button
                 variant="outlined"
@@ -322,66 +296,83 @@ const ActivityPage = () => {
               </Button>
             )}
           </Box>
+          {(resultadoCorrecao || ultimaSubmissao) && (
+            <Box
+              sx={{
+                marginTop: "80px",
+                marginLeft: "60px",
+                padding: "20px",
+                borderRadius: "8px",
+                backgroundColor: resultadoCorrecao
+                  ? resultadoCorrecao === "correto"
+                    ? "#d4edda"
+                    : resultadoCorrecao === "incorreto"
+                    ? "#fff3cd"
+                    : "#f8d7da"
+                  : ultimaSubmissao.tipo === "correto"
+                  ? "#d4edda"
+                  : "#fff3cd",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "10px",
+                width: "100%",
+                maxWidth: "400px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)", 
+              }}
+            >
+              {resultadoCorrecao ? (
+                // Ícones para resultado atual
+                <>
+                  {resultadoCorrecao === "correto" && (
+                    <MdCheckCircle size={40} color="#28a745" />
+                  )}
+                  {resultadoCorrecao === "incorreto" && (
+                    <MdClose size={40} color="#856404" />
+                  )}
+                  {resultadoCorrecao === "erro" && (
+                    <MdError size={40} color="#721c24" />
+                  )}
+                  <Typography
+                    sx={{
+                      color:
+                        resultadoCorrecao === "correto"
+                          ? "#155724"
+                          : resultadoCorrecao === "incorreto"
+                          ? "#856404"
+                          : "#721c24",
+                      textAlign: "center",
+                      whiteSpace: "pre-line",
+                    }}
+                  >
+                    {mensagemResultado}
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  {ultimaSubmissao.tipo === "correto" ? (
+                    <MdCheckCircle size={40} color="#28a745" />
+                  ) : (
+                    <MdClose size={40} color="#856404" />
+                  )}
+                  <Typography
+                    sx={{
+                      color:
+                        ultimaSubmissao.tipo === "correto"
+                          ? "#155724"
+                          : "#856404",
+                      textAlign: "center",
+                      whiteSpace: "pre-line",
+                    }}
+                  >
+                    {ultimaSubmissao.mensagem}
+                  </Typography>
+                </>
+              )}
+            </Box>
+          )}
         </Grid>
       </Grid>
-
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-      >
-        <Box
-          sx={{
-            width: "600px",
-            padding: "20px",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            position: "relative",
-          }}
-        >
-          <IconButton
-            onClick={handleCloseModal}
-            sx={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              color: "#757575",
-              "&:hover": {
-                color: "#000",
-              },
-            }}
-          >
-            <MdClose />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ marginBottom: "10px" }}
-          >
-            Inserir Texto
-          </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={16}
-            variant="outlined"
-            value={inputText}
-            onChange={handleTextChange}
-            sx={{
-              marginBottom: "20px",
-              width: "100vh",
-              fontFamily: "Courier New, monospace",
-              fontSize: "16px",
-              "& .MuiInputBase-input": {
-                fontFamily: "Courier New, monospace",
-              },
-            }}
-          />
-          <Button variant="contained" onClick={handleCloseModal}>
-            Salvar
-          </Button>
-        </Box>
-      </Modal>
 
       <ToastContainer
         position="top-right"
