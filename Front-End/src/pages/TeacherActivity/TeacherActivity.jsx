@@ -197,7 +197,7 @@ const TeacherActivities = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await ActivitiesService.getAllActivities();
+        const response = await ActivitiesService.getAllActivitiesTeacher();
         setActivities(response.atividades);
         setShouldFetchActivities(false);
       } catch (error) {

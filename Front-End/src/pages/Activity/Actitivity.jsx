@@ -44,31 +44,24 @@ const ActivityPage = () => {
   };
 
   useEffect(() => {
-    if (activity?.caminho_pdf) {
-      if (activity.caminho_pdf.startsWith("http")) {
-        setPdfUrl(activity.caminho_pdf);
-      } else {
+    const fetchPdf = async () => {
+      if (activity?.nome) {
         try {
-          const filePath = activity.caminho_pdf;
-          fetch(filePath)
-            .then((response) => response.blob())
-            .then((blob) => {
-              const url = URL.createObjectURL(blob);
-              setPdfUrl(url);
-            })
-            .catch((error) => {
-              console.error("Erro ao carregar o PDF:", error);
-              toast.error("Erro ao carregar o PDF local");
-            });
+          const blob = await ActivitiesService.getPdfActivity(activity.nome);
+          console.log(blob);
+          const url = URL.createObjectURL(blob);
+          setPdfUrl(url);
         } catch (error) {
-          console.error("Erro ao processar o caminho do PDF:", error);
-          toast.error("Erro ao processar o caminho do PDF");
+          console.error("Erro ao carregar o PDF:", error);
+          toast.error("Erro ao carregar o PDF");
         }
       }
-    }
+    };
+
+    fetchPdf();
 
     return () => {
-      if (pdfUrl && !pdfUrl.startsWith("http")) {
+      if (pdfUrl) {
         URL.revokeObjectURL(pdfUrl);
       }
     };
@@ -164,12 +157,22 @@ const ActivityPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ marginTop: "50px", padding: "20px" }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        marginTop: "50px",
+        padding: "20px",
+        "& .MuiContainer-root": {
+          maxWidth: "none",
+        },
+      }}
+    >
       <Grid container sx={{ minHeight: "100vh" }}>
         <Grid
           item
           xs={12}
-          md={6}
+          md={7}
+          lg={8}
           sx={{ paddingRight: "20px", borderRight: "1px solid #e0e0e0" }}
         >
           <Typography
@@ -184,14 +187,25 @@ const ActivityPage = () => {
               data={pdfUrl}
               type="application/pdf"
               width="100%"
-              height="600px"
-              style={{ border: "1px solid #e0e0e0", borderRadius: "8px" }}
+              height="700px"
+              style={{
+                border: "1px solid #e0e0e0",
+                borderRadius: "8px",
+                minHeight: "80vh",
+                maxHeight: "85vh",
+                marginTop: "20px",
+                marginBottom: "20px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                resize: "both",
+                overflow: "auto",
+              }}
             >
               <embed
                 src={pdfUrl}
                 type="application/pdf"
                 width="100%"
-                height="600px"
+                height="800px"
+                style={{ minHeight: "80vh" }}
               />
               <p>
                 Seu navegador não possui um plugin para PDF. Você pode{" "}
@@ -210,7 +224,8 @@ const ActivityPage = () => {
         <Grid
           item
           xs={12}
-          md={6}
+          md={5}
+          lg={4}
           sx={{ position: "relative", paddingLeft: "20px" }}
         >
           <Box
@@ -220,8 +235,8 @@ const ActivityPage = () => {
               alignItems: "center",
               width: "100%",
               maxWidth: "400px",
-              margin: "0 auto", 
-              marginTop: "100px", 
+              margin: "0 auto",
+              marginTop: "100px",
             }}
           >
             <Typography
@@ -318,11 +333,10 @@ const ActivityPage = () => {
                 gap: "10px",
                 width: "100%",
                 maxWidth: "400px",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)", 
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
               }}
             >
               {resultadoCorrecao ? (
-                // Ícones para resultado atual
                 <>
                   {resultadoCorrecao === "correto" && (
                     <MdCheckCircle size={40} color="#28a745" />

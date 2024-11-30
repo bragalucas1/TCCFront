@@ -1,7 +1,15 @@
 import activitiesRepository from "../../repositories/AcitivitiesRepository";
 
 const ActivitiesService = {
-  getAllActivities: async () => {
+  getAllActivities: async (id) => {
+    try {
+      const data = await activitiesRepository.getAllActivities(id);
+      return data;
+    } catch (error) {
+      throw new Error("Falha ao enviar requisição para obter atividades.");
+    }
+  },
+  getAllActivitiesTeacher: async () => {
     try {
       const data = await activitiesRepository.getAllActivities();
       return data;
@@ -34,6 +42,14 @@ const ActivitiesService = {
       throw new Error(
         "Falha ao enviar requisição para encontrar atividade pelo id."
       );
+    }
+  },
+  getPdfActivity: async (activityName) => {
+    try {
+      const data = await activitiesRepository.getPdfActivity(activityName);
+      return data;
+    } catch (error) {
+      throw new Error("Falha ao obter PDF");
     }
   },
 };
