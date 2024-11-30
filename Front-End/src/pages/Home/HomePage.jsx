@@ -103,7 +103,8 @@ const Homepage = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await ActivitiesService.getAllActivities();
+        const user = JSON.parse(localStorage.getItem("user"));
+        const response = await ActivitiesService.getAllActivities(user.id);
         setActivities(response.atividades);
       } catch (error) {
         console.error("Erro ao buscar atividades:", error);
