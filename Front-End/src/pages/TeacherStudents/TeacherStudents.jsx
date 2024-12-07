@@ -185,6 +185,7 @@ const TeacherStudents = () => {
       const formattedStudent = {
         ...editingStudent,
         turma: parseInt(editingStudent.turma, 10),
+        turmap: parseInt(editingStudent.turmap, 10),
       };
       const result = await TeacherService.editStudent(formattedStudent);
 
@@ -374,6 +375,7 @@ const TeacherStudents = () => {
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Turma</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Turma Prática</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Matrícula</TableCell>
               <TableCell align="center" sx={{ fontWeight: 600 }}>
                 Ações
@@ -392,6 +394,7 @@ const TeacherStudents = () => {
               >
                 <TableCell>{student.nome}</TableCell>
                 <TableCell>{student.turma}</TableCell>
+                <TableCell>{student.turmap}</TableCell>
                 <TableCell>{student.matricula}</TableCell>
                 <TableCell align="center">
                   <Box
@@ -487,8 +490,8 @@ const TeacherStudents = () => {
             <Box>
               <Typography variant="body1" sx={{ mb: 3, color: "#666" }}>
                 Selecione um arquivo .txt com a lista de alunos. O arquivo deve
-                estar preenchido com o seguinte formato: 'nome, turma,
-                matricula'.
+                estar preenchido com o seguinte formato: 'nome, turma teórica,
+                turma prática matricula'.
               </Typography>
               <input
                 accept=".txt"
@@ -869,6 +872,19 @@ const TeacherStudents = () => {
                   name="turma"
                   label="Turma"
                   value={editingStudent.turma}
+                  onChange={handleEditChange}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+                <TextField
+                  required
+                  name="turmap"
+                  label="Turma Prática"
+                  value={editingStudent.turmap}
                   onChange={handleEditChange}
                   fullWidth
                   sx={{
