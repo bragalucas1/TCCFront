@@ -11,7 +11,7 @@ const ActivitiesService = {
   },
   getAllActivitiesTeacher: async () => {
     try {
-      const data = await activitiesRepository.getAllActivities();
+      const data = await activitiesRepository.getAllActivitiesTeacher();
       return data;
     } catch (error) {
       throw new Error("Falha ao enviar requisição para obter atividades.");

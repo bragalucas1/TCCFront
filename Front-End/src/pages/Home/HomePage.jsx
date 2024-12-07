@@ -171,12 +171,7 @@ const Homepage = () => {
             <Grid item key={index}>
               <Box sx={{ position: "relative" }}>
                 <SubmissionStatus activity={activity} />
-                <ActivityCard
-                  title={activity.nome}
-                  summary={activity.tipo}
-                  content={activity.conteudo}
-                  activity={activity}
-                />
+                <ActivityCard activity={activity} />
               </Box>
             </Grid>
           ))}

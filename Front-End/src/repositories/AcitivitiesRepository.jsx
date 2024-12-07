@@ -15,7 +15,7 @@ const activitiesRepository = {
   },
   getAllActivitiesTeacher: async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/listarAtividades`);
+      const response = await axios.get(`${API_BASE_URL}/listarAtividadesProf`);
       return response.data;
     } catch (error) {
       throw new Error("Falha ao enviar requisição.");

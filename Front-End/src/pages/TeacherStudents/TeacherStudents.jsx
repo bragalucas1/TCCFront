@@ -35,6 +35,13 @@ import { CheckCircleIcon } from "lucide-react";
 import FileService from "../../services/File/FileService";
 
 const TeacherStudents = () => {
+  const initialStudentState = {
+    id: "",
+    nome: "",
+    turma: "",
+    turmap: "",
+    matricula: "",
+  };
   const [openUpload, setOpenUpload] = useState(false);
   const [shouldFetchStudents, setShouldFetchStudents] = useState(true);
   const [uploadFile, setUploadFile] = useState(null);
@@ -47,6 +54,7 @@ const TeacherStudents = () => {
     id: "",
     nome: "",
     turma: "",
+    turmap: "",
     matricula: "",
   });
   const [students, setStudents] = useState([]);
@@ -77,6 +85,18 @@ const TeacherStudents = () => {
 
   const handleUploadClick = () => {
     setOpenUpload(true);
+  };
+
+  const handleCloseAdd = () => {
+    if (!isAdding) {
+      setNewStudent(initialStudentState);
+      setAddFeedback({
+        show: false,
+        type: "success",
+        message: "",
+      });
+      setOpenAdd(false);
+    }
   };
 
   const handleFileChange = (event) => {
@@ -185,6 +205,7 @@ const TeacherStudents = () => {
       const formattedStudent = {
         ...editingStudent,
         turma: parseInt(editingStudent.turma, 10),
+        turmap: parseInt(editingStudent.turmap, 10),
       };
       const result = await TeacherService.editStudent(formattedStudent);
 
@@ -268,6 +289,7 @@ const TeacherStudents = () => {
       const formattedNewStudent = {
         ...newStudent,
         turma: parseInt(newStudent.turma, 10),
+        turmaP: parseInt(newStudent.turmap, 10),
       };
       const result = await TeacherService.addStudent(formattedNewStudent);
 
@@ -286,7 +308,7 @@ const TeacherStudents = () => {
 
       setTimeout(() => {
         setOpenAdd(false);
-        setNewStudent({ nome: "", turma: "", matricula: "" });
+        setNewStudent({ nome: "", turma: "", turmap: "", matricula: "" });
         setAddFeedback({ show: false, type: "success", message: "" });
       }, 1000);
     } catch (error) {
@@ -374,6 +396,7 @@ const TeacherStudents = () => {
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Turma</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Turma Prática</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Matrícula</TableCell>
               <TableCell align="center" sx={{ fontWeight: 600 }}>
                 Ações
@@ -392,6 +415,7 @@ const TeacherStudents = () => {
               >
                 <TableCell>{student.nome}</TableCell>
                 <TableCell>{student.turma}</TableCell>
+                <TableCell>{student.turmap}</TableCell>
                 <TableCell>{student.matricula}</TableCell>
                 <TableCell align="center">
                   <Box
@@ -487,8 +511,8 @@ const TeacherStudents = () => {
             <Box>
               <Typography variant="body1" sx={{ mb: 3, color: "#666" }}>
                 Selecione um arquivo .txt com a lista de alunos. O arquivo deve
-                estar preenchido com o seguinte formato: 'nome, turma,
-                matricula'.
+                estar preenchido com o seguinte formato: 'nome, turma teórica,
+                turma prática matricula'.
               </Typography>
               <input
                 accept=".txt"
@@ -656,7 +680,9 @@ const TeacherStudents = () => {
       {/* Add Student Dialog */}
       <Dialog
         open={openAdd}
-        onClose={() => setOpenAdd(false)}
+        onClose={() => {
+          setOpenAdd(false);
+        }}
         maxWidth="sm"
         fullWidth
         TransitionComponent={Grow}
@@ -740,6 +766,19 @@ const TeacherStudents = () => {
               />
               <TextField
                 required
+                name="turmap"
+                label="Turma Prática"
+                value={newStudent.turmap}
+                onChange={handleAddChange}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+              <TextField
+                required
                 name="matricula"
                 label="Matrícula"
                 value={newStudent.matricula}
@@ -764,7 +803,7 @@ const TeacherStudents = () => {
           <Fade in={openAdd} timeout={1200}>
             <Box sx={{ display: "flex", gap: 1 }}>
               <Button
-                onClick={() => setOpenAdd(false)}
+                onClick={handleCloseAdd}
                 sx={{ fontWeight: 600 }}
                 disabled={isAdding}
               >
@@ -869,6 +908,19 @@ const TeacherStudents = () => {
                   name="turma"
                   label="Turma"
                   value={editingStudent.turma}
+                  onChange={handleEditChange}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+                <TextField
+                  required
+                  name="turmap"
+                  label="Turma Prática"
+                  value={editingStudent.turmap}
                   onChange={handleEditChange}
                   fullWidth
                   sx={{

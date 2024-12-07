@@ -45,6 +45,7 @@ import ActivitiesService from "../../services/Activities/ActivitiesService";
 import UserService from "../../services/User/UserService";
 
 import CodeIcon from "@mui/icons-material/Code";
+import { DateTimePicker } from "@mui/x-date-pickers";
 const TeacherActivities = () => {
   const initialActivityState = {
     nome: "",
@@ -52,6 +53,7 @@ const TeacherActivities = () => {
     conteudo: "",
     caminho_pdf: null,
     caminho_codigo_base: null,
+    data_limite: "",
   };
   const [editingActivity, setEditingActivity] = useState(null);
   const [shoudFetchActivities, setShouldFetchActivities] = useState(true);
@@ -123,6 +125,11 @@ const TeacherActivities = () => {
       setValidationErrors({});
       setSelectedPdf(null);
       setSelectedCode(null);
+      setAddFeedback({
+        show: false,
+        type: "success",
+        message: "",
+      });
       setOpenAdd(false);
     }
   };
@@ -144,6 +151,7 @@ const TeacherActivities = () => {
       conteudo: !newActivity.conteudo.trim(),
       caminho_pdf: !selectedPdf,
       caminho_codigo_base: !selectedCode,
+      dataLimite: !newActivity.data_limite,
     };
 
     setValidationErrors(errors);
@@ -155,6 +163,8 @@ const TeacherActivities = () => {
       errorMessage = "É necessário fazer upload do arquivo PDF.";
     } else if (errors.caminho_codigo_base) {
       errorMessage = "É necessário fazer upload do código fonte.";
+    } else if (errors.dataLimite) {
+      errorMessage = "É necessário definir uma data limite para a atividade.";
     }
 
     if (errorMessage) {
@@ -198,6 +208,7 @@ const TeacherActivities = () => {
     const fetchActivities = async () => {
       try {
         const response = await ActivitiesService.getAllActivitiesTeacher();
+        console.log(response.atividades);
         setActivities(response.atividades);
         setShouldFetchActivities(false);
       } catch (error) {
@@ -325,6 +336,7 @@ const TeacherActivities = () => {
       formData.append("nome", newActivity.nome);
       formData.append("tipo", newActivity.tipo);
       formData.append("conteudo", newActivity.conteudo);
+      formData.append("dataLimite", newActivity.data_limite);
 
       if (selectedPdf) {
         formData.append("caminho_pdf", selectedPdf);
@@ -403,6 +415,7 @@ const TeacherActivities = () => {
       formData.append("nome", editingActivity.nome);
       formData.append("tipo", editingActivity.tipo);
       formData.append("conteudo", editingActivity.conteudo);
+      formData.append("dataLimite", editingActivity.data_limite);
 
       if (selectedPdf) {
         formData.append("caminho_pdf", selectedPdf);
@@ -548,6 +561,7 @@ const TeacherActivities = () => {
                 <TableCell sx={{ fontWeight: 600 }}>Título</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Tipo</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Conteúdo</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Tempo Limite</TableCell>
                 <TableCell sx={{ fontWeight: 600 }} align="center">
                   Submissões
                 </TableCell>
@@ -569,6 +583,15 @@ const TeacherActivities = () => {
                   <TableCell>{activity.nome}</TableCell>
                   <TableCell>{activity.tipo}</TableCell>
                   <TableCell>{activity.conteudo}</TableCell>
+                  <TableCell>
+                    {new Date(activity.data_limite).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"
@@ -727,6 +750,29 @@ const TeacherActivities = () => {
               error={validationErrors.conteudo}
               helperText={validationErrors.conteudo && "Campo obrigatório"}
               required
+            />
+
+            <TextField
+              name="data_limite"
+              label="Data e Hora Limite"
+              type="datetime-local"
+              value={newActivity.data_limite || ""}
+              onChange={handleChange}
+              fullWidth
+              required
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                "& input": {
+                  padding: "16.5px 14px",
+                  "&::-webkit-calendar-picker-indicator": {
+                    cursor: "pointer",
+                  },
+                },
+              }}
+              error={validationErrors.dataLimite}
+              helperText={validationErrors.dataLimite && "Campo obrigatório"}
             />
             <Box
               sx={{
@@ -923,6 +969,28 @@ const TeacherActivities = () => {
               error={editValidationErrors.conteudo}
               helperText={editValidationErrors.conteudo && "Campo obrigatório"}
               required
+            />
+            <TextField
+              name="data_limite"
+              label="Data e Hora Limite"
+              type="datetime-local"
+              value={editingActivity?.data_limite}
+              onChange={handleEditChange}
+              fullWidth
+              required
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                "& input": {
+                  padding: "16.5px 14px",
+                  "&::-webkit-calendar-picker-indicator": {
+                    cursor: "pointer",
+                  },
+                },
+              }}
+              error={validationErrors.dataLimite}
+              helperText={validationErrors.dataLimite && "Campo obrigatório"}
             />
             <Box
               sx={{
