@@ -7,6 +7,7 @@ import { MdClose } from "react-icons/md";
 import FileService from "../../services/File/FileService";
 import { useLocation } from "react-router-dom";
 import ActivitiesService from "../../services/Activities/ActivitiesService";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const ActivityPage = () => {
   const { state } = useLocation();
@@ -19,6 +20,7 @@ const ActivityPage = () => {
   const [file, setFile] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [currenctActivity, setCurrentActivity] = useState(activity);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const fetchUpdatedActivity = async () => {
     try {
@@ -72,6 +74,15 @@ const ActivityPage = () => {
       fetchUpdatedActivity();
     }
   }, [activity?.id]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Force re-render to update the countdown
+      setForceUpdate((prev) => !prev);
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleFileSend = async (file) => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -156,6 +167,12 @@ const ActivityPage = () => {
     }
   };
 
+  const isPastDeadline = () => {
+    const deadline = new Date(activity.data_limite);
+    const now = new Date();
+    return now > deadline;
+  };
+
   return (
     <Container
       maxWidth={false}
@@ -175,13 +192,73 @@ const ActivityPage = () => {
           lg={8}
           sx={{ paddingRight: "20px", borderRight: "1px solid #e0e0e0" }}
         >
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ marginBottom: "20px" }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
           >
-            Visualização da Atividade
-          </Typography>
+            <Typography variant="h6" component="div">
+              Visualização da Atividade
+            </Typography>
+            {(() => {
+              const deadline = new Date(activity.data_limite);
+              const now = new Date();
+              const diff = deadline - now;
+
+              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+              const hours = Math.floor(
+                (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+              );
+              const minutes = Math.floor(
+                (diff % (1000 * 60 * 60)) / (1000 * 60)
+              );
+
+              const isLessThanOneHour = diff < 1000 * 60 * 60 && diff > 0;
+
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    padding: "8px 16px",
+                    borderRadius: "4px",
+                    backgroundColor: isLessThanOneHour ? "#fef2f2" : "#f8f9fa",
+                    border: `1px solid ${
+                      isLessThanOneHour ? "#fee2e2" : "#e5e7eb"
+                    }`,
+                  }}
+                >
+                  <AccessTimeIcon
+                    sx={{
+                      fontSize: 20,
+                      color: isLessThanOneHour ? "#ef4444" : "#1976d2",
+                    }}
+                  />
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      fontWeight: 500,
+                      color: isLessThanOneHour ? "#ef4444" : "#1976d2",
+                    }}
+                  >
+                    {diff < 0
+                      ? "Prazo encerrado"
+                      : diff < 1000 * 60 * 60
+                      ? minutes == 1
+                        ? `Fecha em ${minutes} minuto`
+                        : `Fecha em ${minutes} minutos`
+                      : diff < 1000 * 60 * 60 * 24
+                      ? `Fecha em ${hours}h ${minutes}min`
+                      : `Fecha em ${days} dias e ${hours}h`}
+                  </Typography>
+                </Box>
+              );
+            })()}
+          </Box>
           {pdfUrl ? (
             <object
               data={pdfUrl}
@@ -255,6 +332,7 @@ const ActivityPage = () => {
               variant="contained"
               component="label"
               startIcon={<MdUpload />}
+              disabled={isPastDeadline()} // Adicione esta condição
               sx={{
                 marginBottom: "10px",
                 padding: "8px 20px",
@@ -271,14 +349,23 @@ const ActivityPage = () => {
                 "&:active": {
                   backgroundColor: fileName ? "#1e7e34" : "#004085",
                 },
+                "&.Mui-disabled": {
+                  backgroundColor: "#ccc",
+                  color: "#666",
+                },
               }}
             >
-              {fileName ? fileName : "Selecionar Arquivo"}
+              {isPastDeadline()
+                ? "Prazo encerrado"
+                : fileName
+                ? fileName
+                : "Selecionar Arquivo"}
               <input
                 type="file"
                 hidden
                 accept=".py"
                 onChange={handleFileChange}
+                disabled={isPastDeadline()}
               />
             </Button>
             {showCorrectButton && (

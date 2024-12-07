@@ -1,13 +1,27 @@
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
-import { PenLine } from "lucide-react";
+import { PenLine, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const ActivityCard = ({ title, summary, content, activity }) => {
+const ActivityCard = ({ activity }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/activity/${activity.nome}`, { state: { activity } });
+  };
+
+  const formatDeadline = (time) => {
+    const date = new Date(time);
+    const formattedDate = date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const formattedTime = date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${formattedDate} - ${formattedTime}`;
   };
 
   return (
@@ -34,13 +48,13 @@ const ActivityCard = ({ title, summary, content, activity }) => {
           position: "absolute",
           top: "16px",
           left: "16px",
-          background: "linear-gradient(135deg, #df6ef1, #b861d9)",
+          background: "linear-gradient(135deg, #2196f3, #1976d2)", // Azul Material UI
           borderRadius: "12px",
           padding: "10px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 4px 8px rgba(223, 110, 241, 0.2)",
+          boxShadow: "0 4px 8px rgba(33, 150, 243, 0.2)",
           zIndex: 1,
         }}
       >
@@ -60,7 +74,7 @@ const ActivityCard = ({ title, summary, content, activity }) => {
             mt: 2,
           }}
         >
-          {title}
+          {activity.nome}
         </Typography>
 
         {/* Summary */}
@@ -73,10 +87,53 @@ const ActivityCard = ({ title, summary, content, activity }) => {
             fontWeight: 500,
           }}
         >
-          {summary}
+          {activity.tipo}
         </Typography>
 
-        {/* Content Balloon */}
+        {/* Deadline */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(33, 150, 243, 0.1)",
+            borderRadius: "8px",
+            padding: "8px 12px",
+            mb: 2,
+            border: "1px solid rgba(33, 150, 243, 0.1)", // Azul claro
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "rgba(33, 150, 243, 0.1)",
+              transform: "translateY(-2px)",
+            },
+          }}
+        >
+          <Clock
+            size={18}
+            color="#2196f3"
+            style={{
+              marginRight: "8px",
+              strokeWidth: 2,
+            }}
+          />
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "14px",
+              fontWeight: 500,
+              color: "#2d3748",
+              fontFamily: "Inter, system-ui, sans-serif",
+              letterSpacing: "0.02em",
+              background: "linear-gradient(135deg, #2196f3, #1976d2)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            {formatDeadline(activity.data_limite)}
+          </Typography>
+        </Box>
+
+        {/* Content Box */}
         <Box
           sx={{
             display: "flex",
@@ -91,10 +148,10 @@ const ActivityCard = ({ title, summary, content, activity }) => {
             sx={{
               position: "relative",
               maxWidth: "90%",
-              backgroundColor: "rgba(223, 110, 241, 0.03)",
+              backgroundColor: "rgba(33, 150, 243, 0.03)",
               borderRadius: "12px",
               padding: "16px",
-              border: "1px solid rgba(223, 110, 241, 0.2)",
+              border: "1px solid rgba(33, 150, 243, 0.2)",
               "&::before": {
                 content: '""',
                 position: "absolute",
@@ -103,7 +160,7 @@ const ActivityCard = ({ title, summary, content, activity }) => {
                 right: "20px",
                 height: "1px",
                 background:
-                  "linear-gradient(90deg, rgba(223,110,241,0) 0%, rgba(223,110,241,0.4) 50%, rgba(223,110,241,0) 100%)",
+                  "linear-gradient(90deg, rgba(33,150,243,0) 0%, rgba(33,150,243,0.4) 50%, rgba(33,150,243,0) 100%)",
               },
               "&::after": {
                 content: '""',
@@ -115,7 +172,7 @@ const ActivityCard = ({ title, summary, content, activity }) => {
                 height: 0,
                 borderLeft: "8px solid transparent",
                 borderRight: "8px solid transparent",
-                borderTop: "8px solid rgba(223, 110, 241, 0.2)",
+                borderTop: "8px solid rgba(33, 150, 243, 0.2)",
               },
             }}
           >
@@ -141,7 +198,7 @@ const ActivityCard = ({ title, summary, content, activity }) => {
                 },
               }}
             >
-              {content}
+              {activity.conteudo}
             </Typography>
           </Box>
         </Box>
