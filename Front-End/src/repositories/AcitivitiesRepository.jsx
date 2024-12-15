@@ -10,7 +10,10 @@ const activitiesRepository = {
       });
       return response.data;
     } catch (error) {
-      throw new Error("Falha ao enviar requisição.");
+      throw new Error(
+        "Falha na requisição de recuperar atividades. Erro:",
+        error
+      );
     }
   },
   getAllActivitiesTeacher: async () => {

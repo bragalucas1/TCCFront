@@ -336,8 +336,10 @@ const TeacherActivities = () => {
       formData.append("nome", newActivity.nome);
       formData.append("tipo", newActivity.tipo);
       formData.append("conteudo", newActivity.conteudo);
-      formData.append("dataLimite", newActivity.data_limite);
-
+      formData.append(
+        "dataLimite",
+        new Date(newActivity.data_limite).toISOString()
+      );
       if (selectedPdf) {
         formData.append("caminho_pdf", selectedPdf);
       }
@@ -488,6 +490,23 @@ const TeacherActivities = () => {
       });
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleVerificationCheckboxChange = (e) => {
+    setNewActivity((prev) => ({
+      ...prev,
+      possuiVerificacao: e.target.checked,
+    }));
+  };
+
+  const handleVerificationFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewActivity((prev) => ({
+        ...prev,
+        caminhoCodigoVerificacao: file,
+      }));
     }
   };
 
