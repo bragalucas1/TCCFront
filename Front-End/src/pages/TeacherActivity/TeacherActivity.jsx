@@ -48,6 +48,7 @@ import UserService from "../../services/User/UserService";
 
 import CodeIcon from "@mui/icons-material/Code";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import { set } from "date-fns";
 const TeacherActivities = () => {
   const initialActivityState = {
     nome: "",
@@ -130,6 +131,7 @@ const TeacherActivities = () => {
       setValidationErrors({});
       setSelectedPdf(null);
       setSelectedCode(null);
+      setSelectedVerification(null);
       setAddFeedback({
         show: false,
         type: "success",
@@ -144,6 +146,7 @@ const TeacherActivities = () => {
       setEditingActivity(null);
       setSelectedPdf(null);
       setSelectedCode(null);
+      setSelectedVerification(null);
       setEditValidationErrors({});
       setOpenEdit(false);
     }
@@ -229,15 +232,17 @@ const TeacherActivities = () => {
   const handleAdd = () => {
     setSelectedCode(null);
     setSelectedPdf(null);
+    setSelectedVerification(null);
     setOpenAdd(true);
   };
 
   const handleEdit = (activity) => {
+    console.log(activity);
     setEditFeedback({ show: false, type: "success", message: "" });
     setEditingActivity({
       ...activity,
-      caminho_codigo_verificacao: activity.caminho_codigo_verificacao || null,
-      possui_verificacao: activity.possui_verificacao || false,
+      caminho_codigo_verificacao: activity.caminho_codigo_verificacao,
+      possui_verificacao: activity.possui_verificacao,
     });
     setOpenEdit(true);
   };
@@ -374,11 +379,10 @@ const TeacherActivities = () => {
       if (selectedCode) {
         formData.append("caminho_codigo_base", selectedCode);
       }
-      if (newActivity.possuiVerificacao) {
-        formData.append(
-          "caminho_codigo_verificacao",
-          newActivity.caminho_codigo_verificacao
-        );
+      if (selectedVerification) {
+        console.log("oiiiiiiiiiiii");
+        formData.append("caminho_codigo_verificacao", selectedVerification);
+        formData.append("possuiVerificacao", true);
       }
 
       const result = await FileService.uploadActivityFile(formData);
@@ -404,6 +408,7 @@ const TeacherActivities = () => {
           });
           setSelectedPdf(null);
           setSelectedCode(null);
+          setSelectedVerification(null);
           setAddFeedback({ show: false, type: "success", message: "" });
         }, 1500);
       }
@@ -452,6 +457,7 @@ const TeacherActivities = () => {
       formData.append("tipo", editingActivity.tipo);
       formData.append("conteudo", editingActivity.conteudo);
       formData.append("dataLimite", editingActivity.data_limite);
+      console.log(editingActivity);
 
       if (selectedPdf) {
         formData.append("caminho_pdf", selectedPdf);
@@ -459,11 +465,11 @@ const TeacherActivities = () => {
       if (selectedCode) {
         formData.append("caminho_codigo_base", selectedCode);
       }
-      if (selectedVerification) {
+      if (editingActivity.possui_verificacao && selectedVerification) {
         formData.append("caminho_codigo_verificacao", selectedVerification);
         formData.append("possuiVerificacao", true);
       } else if (!editingActivity.possui_verificacao) {
-        // Se o checkbox foi desmarcado, indique que o arquivo deve ser removido
+        console.log("tenho q entrar aqui");
         formData.append("caminho_codigo_verificacao", null);
         formData.append("possuiVerificacao", false);
       }
@@ -487,6 +493,7 @@ const TeacherActivities = () => {
         setEditFeedback({ show: false, type: "success", message: "" });
         setEditingActivity(null);
         setSelectedPdf(null);
+        setSelectedVerification(null);
         setEditingActivity(null);
       }, 1500);
     } catch (error) {
@@ -538,19 +545,25 @@ const TeacherActivities = () => {
   const handleVerificationCheckboxChange = (e) => {
     setNewActivity((prev) => ({
       ...prev,
-      possuiVerificacao: e.target.checked,
+      possui_verificacao: e.target.checked,
     }));
   };
 
   const handleVerificationEditCheckboxChange = (e) => {
     const isChecked = e.target.checked;
-    setEditingActivity((prev) => ({
-      ...prev,
-      possui_verificacao: isChecked,
-      caminho_codigo_verificacao: isChecked
-        ? prev.caminho_codigo_verificacao
-        : null,
-    }));
+    console.log("Checkbox checked:", isChecked);
+
+    setEditingActivity((prev) => {
+      const updatedActivity = {
+        ...prev,
+        possui_verificacao: isChecked,
+        caminho_codigo_verificacao: isChecked
+          ? prev.caminho_codigo_verificacao
+          : null,
+      };
+
+      return updatedActivity;
+    });
   };
 
   const handleViewSubmissions = (activity) => {
@@ -838,14 +851,14 @@ const TeacherActivities = () => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={newActivity.possuiVerificacao}
+                  checked={newActivity.possui_verificacao}
                   onChange={handleVerificationCheckboxChange}
                 />
               }
               label="Possui verificação de entradas?"
             />
 
-            {newActivity.possuiVerificacao && (
+            {newActivity.possui_verificacao && (
               <Box
                 sx={{
                   display: "flex",
@@ -871,9 +884,10 @@ const TeacherActivities = () => {
                     }}
                   >
                     <CloudUploadIcon sx={{ mr: 1 }} />
-                    {newActivity.caminho_codigo_verificacao
-                      ? newActivity.caminho_codigo_verificacao.name
-                      : "Upload Código TXT"}
+                    {displayFileName(
+                      selectedVerification,
+                      newActivity?.caminho_codigo_verificacao
+                    ) || "Upload Código Entradas"}
                   </Button>
                 </label>
               </Box>
