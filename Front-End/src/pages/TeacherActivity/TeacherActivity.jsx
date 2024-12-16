@@ -27,6 +27,8 @@ import {
   Collapse,
   Grow,
   Alert,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import {
   Edit as EditIcon,
@@ -54,6 +56,8 @@ const TeacherActivities = () => {
     caminho_pdf: null,
     caminho_codigo_base: null,
     data_limite: "",
+    caminho_codigo_verificacao: null,
+    possui_verificacao: false,
   };
   const [editingActivity, setEditingActivity] = useState(null);
   const [shoudFetchActivities, setShouldFetchActivities] = useState(true);
@@ -67,6 +71,7 @@ const TeacherActivities = () => {
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
   const [selectedPdf, setSelectedPdf] = useState(null);
   const [selectedCode, setSelectedCode] = useState(null);
+  const [selectedVerification, setSelectedVerification] = useState(null);
   const [deleteFeedback, setDeleteFeedback] = useState({
     show: false,
     type: "success",
@@ -229,7 +234,11 @@ const TeacherActivities = () => {
 
   const handleEdit = (activity) => {
     setEditFeedback({ show: false, type: "success", message: "" });
-    setEditingActivity(activity);
+    setEditingActivity({
+      ...activity,
+      caminho_codigo_verificacao: activity.caminho_codigo_verificacao || null,
+      possui_verificacao: activity.possui_verificacao || false,
+    });
     setOpenEdit(true);
   };
 
@@ -290,6 +299,25 @@ const TeacherActivities = () => {
     }
   };
 
+  const handleVerificationFileChange = (e, isEditing = false) => {
+    const file = e.target.files[0];
+    console.log(file);
+    if (file) {
+      setSelectedVerification(file);
+      if (isEditing && editingActivity) {
+        setEditingActivity({
+          ...editingActivity,
+          caminho_codigo_verificacao: file.name,
+        });
+      }
+    } else {
+      setNewActivity((prev) => ({
+        ...prev,
+        caminho_codigo_verificacao: file,
+      }));
+    }
+  };
+
   const EmptyState = () => (
     <Box
       display="flex"
@@ -345,6 +373,12 @@ const TeacherActivities = () => {
       }
       if (selectedCode) {
         formData.append("caminho_codigo_base", selectedCode);
+      }
+      if (newActivity.possuiVerificacao) {
+        formData.append(
+          "caminho_codigo_verificacao",
+          newActivity.caminho_codigo_verificacao
+        );
       }
 
       const result = await FileService.uploadActivityFile(formData);
@@ -425,6 +459,14 @@ const TeacherActivities = () => {
       if (selectedCode) {
         formData.append("caminho_codigo_base", selectedCode);
       }
+      if (selectedVerification) {
+        formData.append("caminho_codigo_verificacao", selectedVerification);
+        formData.append("possuiVerificacao", true);
+      } else if (!editingActivity.possui_verificacao) {
+        // Se o checkbox foi desmarcado, indique que o arquivo deve ser removido
+        formData.append("caminho_codigo_verificacao", null);
+        formData.append("possuiVerificacao", false);
+      }
 
       await ActivitiesService.editActivity(formData);
 
@@ -500,14 +542,15 @@ const TeacherActivities = () => {
     }));
   };
 
-  const handleVerificationFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setNewActivity((prev) => ({
-        ...prev,
-        caminhoCodigoVerificacao: file,
-      }));
-    }
+  const handleVerificationEditCheckboxChange = (e) => {
+    const isChecked = e.target.checked;
+    setEditingActivity((prev) => ({
+      ...prev,
+      possui_verificacao: isChecked,
+      caminho_codigo_verificacao: isChecked
+        ? prev.caminho_codigo_verificacao
+        : null,
+    }));
   };
 
   const handleViewSubmissions = (activity) => {
@@ -517,7 +560,6 @@ const TeacherActivities = () => {
   };
 
   const handleViewCode = (code) => {
-    console.log(code);
     setSelectedCode(code);
     setOpenCodeModal(true);
   };
@@ -793,6 +835,50 @@ const TeacherActivities = () => {
               error={validationErrors.dataLimite}
               helperText={validationErrors.dataLimite && "Campo obrigatório"}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={newActivity.possuiVerificacao}
+                  onChange={handleVerificationCheckboxChange}
+                />
+              }
+              label="Possui verificação de entradas?"
+            />
+
+            {newActivity.possuiVerificacao && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 2,
+                  flexDirection: { xs: "column", sm: "row" },
+                }}
+              >
+                <input
+                  accept=".txt"
+                  style={{ display: "none" }}
+                  id="txt-upload"
+                  type="file"
+                  onChange={(e) => handleVerificationFileChange(e, true)}
+                />
+                <label htmlFor="txt-upload">
+                  <Button
+                    variant="contained"
+                    component="span"
+                    sx={{
+                      width: { xs: "100%", sm: "auto" },
+                      minWidth: "200px",
+                    }}
+                  >
+                    <CloudUploadIcon sx={{ mr: 1 }} />
+                    {newActivity.caminho_codigo_verificacao
+                      ? newActivity.caminho_codigo_verificacao.name
+                      : "Upload Código TXT"}
+                  </Button>
+                </label>
+              </Box>
+            )}
+
             <Box
               sx={{
                 display: "flex",
@@ -1011,6 +1097,51 @@ const TeacherActivities = () => {
               error={validationErrors.dataLimite}
               helperText={validationErrors.dataLimite && "Campo obrigatório"}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={editingActivity?.possui_verificacao || false}
+                  onChange={handleVerificationEditCheckboxChange}
+                />
+              }
+              label="Possui verificação de entradas?"
+            />
+
+            {editingActivity?.possui_verificacao && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 2,
+                  flexDirection: { xs: "column", sm: "row" },
+                }}
+              >
+                <input
+                  accept=".txt"
+                  style={{ display: "none" }}
+                  id="txt-upload"
+                  type="file"
+                  onChange={(e) => handleVerificationFileChange(e, true)}
+                />
+                <label htmlFor="txt-upload">
+                  <Button
+                    variant="contained"
+                    component="span"
+                    sx={{
+                      width: { xs: "100%", sm: "auto" },
+                    }}
+                  >
+                    <CloudUploadIcon sx={{ mr: 1 }} />
+                    {editingActivity?.caminho_codigo_verificacao
+                      ? editingActivity?.caminho_codigo_verificacao
+                          .split("\\")
+                          .pop()
+                      : "Upload Código TXT"}
+                  </Button>
+                </label>
+              </Box>
+            )}
+
             <Box
               sx={{
                 display: "flex",
